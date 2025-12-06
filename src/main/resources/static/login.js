@@ -1,4 +1,4 @@
-alert("login.js is loaded");
+console.log("login.js is loaded");
 
 function getCredentials() {
     return {
@@ -8,16 +8,12 @@ function getCredentials() {
 }
 
 async function sendLoginRequest(credentials) {
-    const params = new URLSearchParams();
-    params.append("username", credentials.username);
-    params.append("password", credentials.password);
-
-    const response = await fetch("/api/login", {
+    const response = await fetch("/api/user/login", {
         method: "POST",
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/json"
         },
-        body: params.toString()
+        body: JSON.stringify(credentials)
     });
 
     if (!response.ok) return null;

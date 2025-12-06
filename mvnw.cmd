@@ -21,6 +21,10 @@
 @REM ----------------------------------------------------------------------------
 @REM Apache Maven Wrapper startup batch script, version 3.3.4
 @REM
+
+set JAVA_HOME=C:\Users\ducer\.jdks\openjdk-21.0.2
+set PATH=%JAVA_HOME%\bin;%PATH%
+
 @REM Optional ENV vars
 @REM   MVNW_REPOURL - repo url base for downloading maven distribution
 @REM   MVNW_USERNAME/MVNW_PASSWORD - user and password for downloading maven

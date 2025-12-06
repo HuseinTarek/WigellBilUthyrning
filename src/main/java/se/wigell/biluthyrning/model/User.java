@@ -101,4 +101,5 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
 }

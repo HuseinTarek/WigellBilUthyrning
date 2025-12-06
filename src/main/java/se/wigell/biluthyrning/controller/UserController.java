@@ -1,7 +1,5 @@
 package se.wigell.biluthyrning.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import se.wigell.biluthyrning.model.Booking;
@@ -22,15 +20,13 @@ public class UserController {
         this.bookingService = bookingService;
     }
 
-    @PostMapping("/api/user/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
-        User user = userService.validateLogin(loginRequest.getUsername(), loginRequest.getPassword());
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    @PostMapping("/login")
+    public User login(@RequestBody LoginRequest credentials) {
+        System.out.println("USERNAME = " + credentials.getUsername());
+        System.out.println("PASSWORD = " + credentials.getPassword());
+        return userService.validateLogin(credentials.getUsername(), credentials.getPassword());
     }
+
 
     @GetMapping("/me")
     public User getMyProfile(Authentication auth) {
@@ -44,23 +40,3 @@ public class UserController {
 
 }
 
-class LoginRequest {
-    private String username;
-    private String password;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-}

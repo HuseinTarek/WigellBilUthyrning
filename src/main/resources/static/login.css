@@ -5,21 +5,28 @@
     font-family: 'Inter', sans-serif;
 
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: column;     /* fix */
+    justify-content: flex-start;/* fix */
     align-items: center;
 
-    height: 100vh;
-    margin: 0; /* important */
-    padding: 0; /* important */
+    min-height: 100vh;          /* fix */
+    margin: 0;
+    padding: 20px 0;            /* slight padding so content doesn't touch the top */
 }
 
 .login-panel {
+    margin-top: 40px;  /* fix */
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
 }
+
+
+.footer div {
+    outline: none !important;
+}
+
 
 .login-title {
     font-size: 2rem;
@@ -52,4 +59,15 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.login-footer {
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+
+.ad-space img {
+    height: 60px;
+    border-radius: 8px;
 }

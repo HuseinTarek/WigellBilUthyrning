@@ -140,19 +140,21 @@
     color: #f8fafc;
 }
 
-.footer {
+.admin-footer {
     margin-top: auto;
-    background-color: #1e293b;
-    border: 1px solid #334155;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
+    margin-bottom: 20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
+
 
 .ad-space img {
     height: 60px;
     border-radius: 8px;
 }
+
+
 
 .car-image {
     width: 120px;

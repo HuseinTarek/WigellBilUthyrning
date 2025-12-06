@@ -17,20 +17,25 @@ public class UserConfig {
             createIfMissing(userRepository, 1, "user1");
             createIfMissing(userRepository, 2, "user2");
             createIfMissing(userRepository, 3, "user3");
-            createIfMissing(userRepository, 4, "user4"); // must exist
-            createIfMissing(userRepository, 6, "user6"); // must exist
+            createIfMissing(userRepository, 4, "user4");
+            createIfMissing(userRepository, 6, "user6");
 
             System.out.println("Users loaded.");
         };
     }
 
     private void createIfMissing(UserRepository repo, int id, String username) {
+
+        String email = username + "@mail.com";
+
         if (repo.existsById(id)) return;
+        if (repo.findByEmail(email).isPresent()) return;
+        if (repo.findByUsername(username) != null) return;
 
         User u = new User();
         u.setId(id);
         u.setUsername(username);
-        u.setEmail(username + "@mail.com");
+        u.setEmail(email);
         u.setFirstName(username);
         u.setLastName("Test");
         u.setNoOfOrders(0);

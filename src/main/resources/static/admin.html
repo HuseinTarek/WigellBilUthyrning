@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8" />
+    <title>Användare</title>
+    <link rel="stylesheet" href="global.css" />
+    <link rel="stylesheet" href="user.css" />
+</head>
+
+<body>
+<div class="users-panel">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+        <div id="usernameDisplay" class="user-label">User</div>
+        <div id="logoutBtn" class="logout-btn">Logout</div>
+    </div>
+
+    <div class="users-title">Bokningssystem</div>
+
+    <!-- Meny -->
+    <div class="user-menu">
+        <div class="menu-item" data-view="cars">Tillgängliga bilar</div>
+        <div class="menu-item" data-view="myBookings">Mina bokningar</div>
+    </div>
+
+    <!-- Innehåll -->
+    <div id="userContent" class="user-content">
+        Laddar...
+    </div>
+
+    <!-- Footer + Logo -->
+    <div class="footer">
+        <div class="ad-space">
+            <img src="/KoncernensLogga.png" alt="Reklam" />
+        </div>
+    </div>
+
+</div>
+
+<script src="/user.js"></script>
+</body>
+</html>

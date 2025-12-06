@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8" />
+    <title>Användare</title>
+    <link rel="stylesheet" href="global.css" />
+    <link rel="stylesheet" href="user.css" />
+</head>
+
+<body>
+
+<div class="user-container">
+
+    <div class="top-bar">
+        <div id="usernameDisplay" class="user-label"></div>
+        <div id="logoutBtn" class="logout-btn">Logout</div>
+    </div>
+
+    <!-- =======================
+         SECTION 1: AVAILABLE CARS
+         ======================= -->
+    <h2 class="section-title">Tillgängliga bilar</h2>
+
+    <div class="sorting-bar">
+        <!-- comment: sorting for available cars -->
+        <label for="sortSelect">Sortera:</label>
+        <select id="sortSelect">
+            <option value="name-asc">Namn A–Ö</option>
+            <option value="name-desc">Namn Ö–A</option>
+            <option value="type-asc">Typ A–Ö</option>
+            <option value="type-desc">Typ Ö–A</option>
+        </select>
+    </div>
+
+    <div id="availableCars" class="cars-list">
+        <!-- comment: JS inserts available cars here -->
+        Laddar bilar...
+    </div>
+
+    <!-- =======================
+         SECTION 2: MY BOOKINGS
+         ======================= -->
+    <h2 class="section-title">Mina bokningar</h2>
+
+    <div id="myBookings" class="bookings-list">
+        <!-- comment: JS inserts user bookings here -->
+        Laddar bokningar...
+    </div>
+
+    <div class="footer">
+        <div class="ad-space">
+            <img src="/KoncernensLogga.png" alt="Reklam" />
+        </div>
+    </div>
+
+</div>
+
+<script src="user.js"></script>
+</body>
+</html>

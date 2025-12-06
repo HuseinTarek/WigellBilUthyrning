@@ -1,4 +1,4 @@
-alert("login.js loaded!"); // If you don't see this, your browser is using an old file.
+alert("login.js is loaded");
 
 function getCredentials() {
     return {
@@ -26,27 +26,45 @@ async function sendLoginRequest(credentials) {
 
 
 function redirectUser(user) {
-    if (user.role === "ADMIN") {
-        window.location.href = "/admin.html";
-    } else {
-        window.location.href = "/main.html";
+
+    if (!user || !user.role) {
+        window.location.href = "/400.html";
+        return;
+    }
+
+    switch (user.role.toUpperCase()) {
+        case "ADMIN":
+            window.location.href = "/admin.html";
+            break;
+
+        case "USER":
+            window.location.href = "/user.html";
+            break;
+
+        default:
+            window.location.href = "/400.html";
     }
 }
+
 
 function showError(msg) {
     document.getElementById("loginError").textContent = msg;
 }
 
+document.getElementById("loginBtn").onclick = handleLogin;
 
-document.getElementById("loginBtn").addEventListener("click", async () => {
 
-    const credentials = getCredentials();
-    const user = await sendLoginRequest(credentials);
+async function handleLogin() {
+
+    const creds = getCredentials();
+    const user = await sendLoginRequest(creds);
 
     if (!user) {
         showError("Fel användarnamn eller lösenord");
         return;
     }
 
+    console.log("FULL USER:", user);
+
     redirectUser(user);
-});
+}

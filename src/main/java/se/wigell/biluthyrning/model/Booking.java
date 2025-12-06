@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "booking")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"bookings"})
 
 public class Booking {
 
@@ -25,28 +25,59 @@ public class Booking {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDate from_date;
-    private LocalDate to_date;
-    private Double total_price;
+    @Column(name = "from_date")
+    private LocalDate fromDate;
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    @Column(name = "to_date")
+    private LocalDate toDate;
 
-    public Integer getActive() { return active; }
-    public void setActive(Integer active) { this.active = active; }
 
-    public Car getCar() { return car; }
-    public void setCar(Car car) { this.car = car; }
+    public Integer getId() {
+        return id;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public LocalDate getFrom_date() { return from_date; }
-    public void setFrom_date(LocalDate from_date) { this.from_date = from_date; }
+    public Integer getActive() {
+        return active;
+    }
 
-    public LocalDate getTo_date() { return to_date; }
-    public void setTo_date(LocalDate to_date) { this.to_date = to_date; }
+    public void setActive(Integer active) {
+        this.active = active;
+    }
 
-    public Double getTotal_price() { return total_price; }
-    public void setTotal_price(Double total_price) { this.total_price = total_price; }
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDate getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(LocalDate fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public LocalDate getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(LocalDate toDate) {
+        this.toDate = toDate;
+    }
+
 }

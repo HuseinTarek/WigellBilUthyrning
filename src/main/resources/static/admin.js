@@ -162,9 +162,9 @@ async function loadBookings() {
         r.appendChild(createCell(b.active));
         r.appendChild(createCell(b.car?.name ?? "-"));
         r.appendChild(createCell(b.user?.username ?? "-"));
-        r.appendChild(createCell(b.from_date));
-        r.appendChild(createCell(b.to_date));
-        r.appendChild(createCell(b.total_price));
+        r.appendChild(createCell(b.fromDate ?? "-"));
+        r.appendChild(createCell(b.toDate ?? "-"));
+        r.appendChild(createCell("-"));
 
         adminContent.appendChild(r);
     });

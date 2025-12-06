@@ -16,6 +16,14 @@ public class LoginController {
 
     @PostMapping
     public User login(@RequestParam String username, @RequestParam String password) {
+
+        System.out.println("=== LOGIN ATTEMPT ===");
+        System.out.println("USERNAME: " + username);
+        System.out.println("PASSWORD: " + password);
+
         return userService.validateLogin(username, password);
     }
+
+
+
 }

@@ -2,34 +2,35 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8" />
-    <title>Användare</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="global.css" />
-    <link rel="stylesheet" href="user.css" />
+    <link rel="stylesheet" href="admin.css" />
 </head>
 
 <body>
-<div class="users-panel">
+<div class="admin-panel">
 
     <!-- Top bar -->
     <div class="top-bar">
-        <div id="usernameDisplay" class="user-label">User</div>
+        <div id="usernameDisplay" class="user-label">Admin</div>
         <div id="logoutBtn" class="logout-btn">Logout</div>
     </div>
 
-    <div class="users-title">Bokningssystem</div>
+    <div class="admin-title">Adminpanel</div>
 
-    <!-- Meny -->
-    <div class="user-menu">
-        <div class="menu-item" data-view="cars">Tillgängliga bilar</div>
-        <div class="menu-item" data-view="myBookings">Mina bokningar</div>
+    <!-- Menu -->
+    <div class="admin-menu">
+        <div class="menu-item" data-view="users">Användare</div>
+        <div class="menu-item" data-view="cars">Bilar</div>
+        <div class="menu-item" data-view="bookings">Bokningar</div>
     </div>
 
-    <!-- Innehåll -->
-    <div id="userContent" class="user-content">
+    <!-- Main content -->
+    <div id="adminContent" class="admin-content">
         Laddar...
     </div>
 
-    <!-- Footer + Logo -->
+    <!-- Footer -->
     <div class="footer">
         <div class="ad-space">
             <img src="/KoncernensLogga.png" alt="Reklam" />
@@ -38,6 +39,6 @@
 
 </div>
 
-<script src="/user.js"></script>
+<script src="/admin.js?v=3"></script>
 </body>
 </html>

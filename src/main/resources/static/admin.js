@@ -3,6 +3,11 @@ const usernameDisplay = document.getElementById("usernameDisplay");
 const adminContent=document.getElementById("adminContent")
 const menuItems = document.querySelectorAll(".menu-item");
 
+let adminSort = {
+    column: null,
+    direction: "asc"
+};
+
 logoutBtn.addEventListener("click", () => {
     window.location.href = "/logout";
 });

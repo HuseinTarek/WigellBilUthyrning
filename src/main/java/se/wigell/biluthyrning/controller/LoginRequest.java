@@ -1,8 +1,17 @@
 package se.wigell.biluthyrning.controller;
 
-class LoginRequest {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class LoginRequest {
+
+    @JsonProperty("username")
     private String username;
+
+    @JsonProperty("password")
     private String password;
+
+    public LoginRequest() { }
+
 
     public String getUsername() {
         return username;

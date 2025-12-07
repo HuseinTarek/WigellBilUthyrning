@@ -24,11 +24,15 @@ async function sendLoginRequest(credentials) {
 function redirectUser(user) {
 
     if (!user || !user.role) {
+        console.log("NO ROLE FOUND:", user);
         window.location.href = "/400.html";
         return;
     }
 
-    switch (user.role.toUpperCase()) {
+    const role = user.role.replace("ROLE_", "").toUpperCase();
+    console.log("NORMALIZED ROLE:", role);
+
+    switch (role) {
         case "ADMIN":
             window.location.href = "/admin.html";
             break;
@@ -38,9 +42,11 @@ function redirectUser(user) {
             break;
 
         default:
+            console.log("UNKNOWN ROLE:", role);
             window.location.href = "/400.html";
     }
 }
+
 
 
 function showError(msg) {
@@ -61,6 +67,7 @@ async function handleLogin() {
     }
 
     console.log("FULL USER:", user);
+    console.log("ROLE:", user.role);
 
     redirectUser(user);
 }

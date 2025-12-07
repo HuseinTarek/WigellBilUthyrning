@@ -1,71 +1,12 @@
-console.log("login.js is loaded");
+// This script now only handles showing an error message if the login fails.
+// The login process itself is handled by the form submission to Spring Security.
 
-function getCredentials() {
-    return {
-        username: document.getElementById("username").value,
-        password: document.getElementById("password").value
-    };
-}
-
-async function sendLoginRequest(credentials) {
-    const response = await fetch("/api/user/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(credentials)
-    });
-
-    if (!response.ok) return null;
-    return await response.json();
-}
-
-
-function redirectUser(user) {
-
-    if (!user || !user.role) {
-        console.log("NO ROLE FOUND:", user);
-        window.location.href = "/400.html";
-        return;
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        const loginError = document.getElementById("loginError");
+        if (loginError) {
+            loginError.textContent = "Fel användarnamn eller lösenord.";
+        }
     }
-
-    const role = user.role.replace("ROLE_", "").toUpperCase();
-    console.log("NORMALIZED ROLE:", role);
-
-    switch (role) {
-        case "ADMIN":
-            window.location.href = "/admin.html";
-            break;
-
-        case "USER":
-            window.location.href = "/user.html";
-            break;
-
-        default:
-            console.log("UNKNOWN ROLE:", role);
-            window.location.href = "/400.html";
-    }
-}
-
-function showError(msg) {
-    document.getElementById("loginError").textContent = msg;
-}
-
-document.getElementById("loginBtn").onclick = handleLogin;
-
-
-async function handleLogin() {
-
-    const creds = getCredentials();
-    const user = await sendLoginRequest(creds);
-
-    if (!user) {
-        showError("Fel användarnamn eller lösenord");
-        return;
-    }
-
-    console.log("FULL USER:", user);
-    console.log("ROLE:", user.role);
-
-    redirectUser(user);
-}
+});

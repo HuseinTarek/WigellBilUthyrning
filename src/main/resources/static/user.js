@@ -2,9 +2,12 @@ const logoutBtn = document.getElementById("logoutBtn");
 const usernameDisplay = document.getElementById("usernameDisplay");
 const userContent=document.getElementById("userContent")
 const menuItems = document.querySelectorAll(".menu-item");
-logoutBtn.addEventListener("click", () => {
-    window.location.href = "/logout";
-});
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+        window.location.href = "/logout";
+    });
+}
 
 menuItems.forEach(item => {
     item.addEventListener("click", () => {
@@ -20,116 +23,124 @@ menuItems.forEach(item => {
     })
 })
 
-async function loadCars() {
-
-    userContent.innerHTML = "";
-
-    const response = await fetch("/api/user/cars", { credentials: "include" })
-    ;
-    const cars = await response.json();
-
-    console.log("CARS FROM DB:", cars);
-
-    const h = document.createElement("div");
-    h.classList.add("car-titles");
-
-    h.appendChild(createHeader("ID"));
-    h.appendChild(createHeader("Name"));
-    h.appendChild(createHeader("Type"));
-    h.appendChild(createHeader("Model"));
-    h.appendChild(createHeader("Price"));
-    h.appendChild(createHeader("Image"));
-    h.appendChild(createHeader("Feature1"));
-    h.appendChild(createHeader("Feature2"));
-    h.appendChild(createHeader("Feature3"));
-
-    userContent.appendChild(h);
-
-    cars.forEach(car => {
-        console.log("IMAGE VALUE:", car.image);
-        console.log("IMAGE RAW:", car.image);
-        console.log("TYPE:", typeof car.image);
-
-        const r = document.createElement("div");
-        r.classList.add("car-row");
-
-        r.appendChild(createCell(car.id));
-        r.appendChild(createCell(car.name));
-        r.appendChild(createCell(car.type));
-        r.appendChild(createCell(car.model));
-        r.appendChild(createCell(car.price));
-
-        const imgCell = document.createElement("div");
-        const img = document.createElement("img");
-        img.src = "data:image/jpeg;base64," + car.image;
-        img.classList.add("car-image");
-        imgCell.appendChild(img);
-        r.appendChild(imgCell);
-
-        r.appendChild(createCell(car.feature1));
-        r.appendChild(createCell(car.feature2));
-        r.appendChild(createCell(car.feature3));
-
-        userContent.appendChild(r);
-    });
-
-    function createHeader(text) {
-        const d = document.createElement("div");
-        d.textContent = text;
-        return d;
+function normalizeArray(obj) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) return obj;
+    if (Array.isArray(obj.content)) return obj.content;
+    if (Array.isArray(obj.data)) return obj.data;
+    if (Array.isArray(obj.cars)) return obj.cars;
+    // try to find first array property
+    for (const k of Object.keys(obj)) {
+        if (Array.isArray(obj[k])) return obj[k];
     }
-
-    function createCell(text) {
-        const d = document.createElement("div");
-        d.textContent = text;
-        return d;
-    }
+    return [];
 }
 
 
-async function loadBookings() {
+async function loadCars() {
+    if (!userContent) return;
     userContent.innerHTML = "";
 
-    const response = await fetch("/api/user/my-bookings");
-    const bookings = await response.json();
-    const h = document.createElement("div");
+    try {
+        const response = await fetch("/api/user/cars", { credentials: "include" });
+        if (!response.ok) {
+            const body = await response.text();
+            if (response.status === 401 || response.status === 403) {
+                return;
+            }
+            console.error("Failed to fetch cars:", response.status, body);
+            userContent.innerHTML = `<div class="empty">Error ${response.status}: ${body || 'Failed to load cars'}</div>`;
+            return;
+        }
+        const json = await response.json();
+        const cars = normalizeArray(json);
 
-    h.classList.add("booking-titles");
+        const h = document.createElement("div");
+        h.classList.add("car-titles");
+        ["ID","Name","Type","Model","Price","Image","Feature1","Feature2","Feature3"]
+            .forEach(t => { const d = document.createElement("div"); d.textContent = t; h.appendChild(d); });
+        userContent.appendChild(h);
 
-    h.appendChild(createHeader("ID"));
-    h.appendChild(createHeader("Active"));
-    h.appendChild(createHeader("Car"));
-    h.appendChild(createHeader("User"));
-    h.appendChild(createHeader("From"));
-    h.appendChild(createHeader("To"));
-    h.appendChild(createHeader("Price"));
+        if (cars.length === 0) {
+            userContent.appendChild(Object.assign(document.createElement("div"), { className: "empty", textContent: "No cars found" }));
+            return;
+        }
 
-    userContent.appendChild(h);
+        cars.forEach(car => {
+            const r = document.createElement("div");
+            r.classList.add("car-row");
+            [car.id, car.name, car.type, car.model, car.price].forEach(v => {
+                const d = document.createElement("div"); d.textContent = v ?? "-"; r.appendChild(d);
+            });
 
-    bookings.forEach(b => {
-        const r = document.createElement("div");
-        r.classList.add("booking-row");
+            const imgCell = document.createElement("div");
+            const img = document.createElement("img");
+            const raw = car.image ?? "";
+            img.src = raw.startsWith("data:") ? raw : (raw ? "data:image/jpeg;base64," + raw : "");
+            img.classList.add("car-image");
+            img.onerror = () => { img.style.display = 'none'; };
+            imgCell.appendChild(img);
+            r.appendChild(imgCell);
 
-        r.appendChild(createCell(b.id));
-        r.appendChild(createCell(b.active));
-        r.appendChild(createCell(b.car?.name ?? "-"));
-        r.appendChild(createCell(b.user?.username ?? "-"));
-        r.appendChild(createCell(b.fromDate ?? "-"));
-        r.appendChild(createCell(b.toDate ?? "-"));
-        r.appendChild(createCell("-"));
+            [car.feature1, car.feature2, car.feature3].forEach(v => {
+                const d = document.createElement("div"); d.textContent = v ?? "-"; r.appendChild(d);
+            });
 
-        userContent.appendChild(r);
-    });
-
-    function createHeader(text) {
-        const d = document.createElement("div");
-        d.textContent = text;
-        return d;
+            userContent.appendChild(r);
+        });
+    } catch (err) {
+        console.error("Error loading cars:", err);
+        userContent.innerHTML = `<div class="empty">Network error loading cars</div>`;
     }
+}
 
-    function createCell(text) {
-        const d = document.createElement("div");
-        d.textContent = text ?? "-";
-        return d;
+async function loadBookings() {
+    if (!userContent) return;
+    userContent.innerHTML = "";
+
+    try {
+        const response = await fetch("/api/user/my-bookings", { credentials: "include" });
+        if (!response.ok) {
+            const body = await response.text();
+            if (response.status === 401 || response.status === 403) {
+                return;
+            }
+            console.error("Failed to fetch bookings:", response.status, body);
+            userContent.innerHTML = `<div class="empty">Error ${response.status}: ${body || 'Failed to load bookings'}</div>`;
+            return;
+        }
+        const json = await response.json();
+        const bookings = normalizeArray(json);
+
+        const h = document.createElement("div");
+        h.classList.add("booking-titles");
+        ["ID","Active","Car","User","From","To","Price"].forEach(t => {
+            const d = document.createElement("div"); d.textContent = t; h.appendChild(d);
+        });
+        userContent.appendChild(h);
+
+        if (bookings.length === 0) {
+            userContent.appendChild(Object.assign(document.createElement("div"), { className: "empty", textContent: "No bookings found" }));
+            return;
+        }
+
+        bookings.forEach(b => {
+            const r = document.createElement("div");
+            r.classList.add("booking-row");
+            const cells = [
+                b.id,
+                b.active,
+                b.car?.name ?? "-",
+                b.user?.username ?? "-",
+                b.fromDate ?? "-",
+                b.toDate ?? "-",
+                b.price ?? "-"
+            ];
+            cells.forEach(v => { const d = document.createElement("div"); d.textContent = v; r.appendChild(d); });
+            userContent.appendChild(r);
+        });
+    } catch (err) {
+        console.error("Error loading bookings:", err);
+        userContent.innerHTML = `<div class="empty">Network error loading bookings</div>`;
     }
 }

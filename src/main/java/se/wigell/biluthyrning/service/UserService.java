@@ -2,25 +2,59 @@ package se.wigell.biluthyrning.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.wigell.biluthyrning.repository.UserRepository;
 import se.wigell.biluthyrning.model.User;
 
+import java.util.Collections;
 import java.util.List;
 
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+
+        String raw = user.getRole() == null ? "USER" : user.getRole().trim();
+
+        java.util.List<SimpleGrantedAuthority> authorities = java.util.Arrays.stream(raw.split("[,;\\s]+"))
+                .map(r -> r.trim().toUpperCase())
+                .filter(r -> !r.isEmpty())
+                .map(r -> r.startsWith("ROLE_") ? r.substring(5) : r) // remove any existing prefix
+                .map(r -> "ROLE_" + r) // ensure single prefix
+                .map(SimpleGrantedAuthority::new)
+                .collect(java.util.stream.Collectors.toList());
+
+        if (authorities.isEmpty()) {
+            authorities = java.util.Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                authorities
+        );
+    }
+
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
@@ -39,33 +73,6 @@ public class UserService {
         }
         return userRepository.save(user);
     }
-//    public User validateLogin(String username, String password) {
-//        User user = userRepository.findByUsername(username);
-//
-//        if (user == null) {
-//            throw new RuntimeException("User not found");
-//        }
-//
-//        if (!passwordEncoder.matches(password, user.getPassword())) {
-//            throw new RuntimeException("Wrong password");
-//        }
-//
-//        return user;
-//    }
-
-
-//    // validateLogin now returns null for bad credentials instead of throwing RuntimeException
-//    public User validateLogin(String username, String rawPassword) {
-//        User user = userRepository.findByUsername(username);
-//        if (user == null) {
-//            return null;
-//        }
-//        // if passwords are stored hashed, use PasswordEncoder.matches
-//        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-//            return null;
-//        }
-//        return user;
-//    }
 
     public User validateLogin(String username, String rawPassword) {
         if (username == null || rawPassword == null) return null;

@@ -1,6 +1,6 @@
 const logoutBtn = document.getElementById("logoutBtn");
 const usernameDisplay = document.getElementById("usernameDisplay");
-const adminContent=document.getElementById("admin-content")
+const adminContent=document.getElementById("adminContent")
 const menuItems = document.querySelectorAll(".menu-item");
 
 logoutBtn.addEventListener("click", () => {
@@ -26,160 +26,229 @@ menuItems.forEach(item => {
 
 
 async function loadUsers() {
-    const response = await fetch("/api/admin/users");
-    const users = await response.json();
+
+    // comment: safety check
+    if (!adminContent) {
+        console.error("adminContent not found (loadUsers)");
+        return;
+    }
 
     adminContent.innerHTML = "";
 
-    const h = document.createElement("div");
-    h.classList.add("user-titles");
+    try {
+        const response = await fetch("/api/admin/users", {
+            credentials: "include"   // comment: send session cookie
+        });
 
-    h.appendChild(createHeader("ID"));
-    h.appendChild(createHeader("Email"));
-    h.appendChild(createHeader("First Name"));
-    h.appendChild(createHeader("Last Name"));
-    h.appendChild(createHeader("Phone"));
-    h.appendChild(createHeader("Username"));
+        if (!response.ok) {
+            console.error("Failed to load users:", response.status);
+            adminContent.textContent = "Kunde inte hämta användare.";
+            return;
+        }
 
-    adminContent.appendChild(h);
+        const json = await response.json();
+        const users = Array.isArray(json) ? json : json.data || [];
 
+        console.log("USERS FROM DB:", users);
+
+        // ----- titles -----
+        const h = document.createElement("div");
+        h.classList.add("user-titles");
+
+        ["ID", "Email", "First Name", "Last Name", "Phone", "Username"]
+            .forEach(t => h.appendChild(createHeader(t)));
+
+        adminContent.appendChild(h);
+
+        // ----- rows -----
+        users.forEach(u => {
+            const r = document.createElement("div");
+            r.classList.add("user-row");
+
+            r.appendChild(createCell(u.id));
+            r.appendChild(createCell(u.email));
+            r.appendChild(createCell(u.firstName));
+            r.appendChild(createCell(u.lastName));
+            r.appendChild(createCell(u.phone));
+            r.appendChild(createCell(u.username));
+
+            adminContent.appendChild(r);
+        });
+
+    } catch (err) {
+        console.error("Error loading users:", err);
+        adminContent.textContent = "Fel inträffade vid hämtning av användare.";
+    }
+
+    // ----- helpers -----
     function createHeader(text) {
         const d = document.createElement("div");
         d.textContent = text;
         return d;
     }
-    users.forEach(user => {
-        const r = document.createElement("div");
-        r.classList.add("user-row");
 
-        r.appendChild(createCell(user.id));
-        r.appendChild(createCell(user.email));
-        r.appendChild(createCell(user.firstName));
-        r.appendChild(createCell(user.lastName));
-        r.appendChild(createCell(user.phone));
-        r.appendChild(createCell(user.username));
-
-        adminContent.appendChild(r);
-    });
-
-    function createCell(text) {
+    function createCell(value) {
         const d = document.createElement("div");
-        d.textContent = text;
+        d.textContent = value ?? "-";
         return d;
     }
 }
+
 
 async function loadCars() {
 
+    // comment: safety check
+    if (!adminContent) {
+        console.error("adminContent not found (loadCars)");
+        return;
+    }
+
     adminContent.innerHTML = "";
 
-    const response = await fetch("/api/admin/cars");
-    const cars = await response.json();
+    try {
+        const response = await fetch("/api/admin/cars", {
+            credentials: "include"   // comment: send session cookie
+        });
 
-    console.log("CARS FROM DB:", cars);
+        if (!response.ok) {
+            console.error("Failed to load cars (status):", response.status);
+            adminContent.textContent = "Kunde inte hämta bilar.";
+            return;
+        }
 
-    const h = document.createElement("div");
-    h.classList.add("car-titles");
+        const json = await response.json();
+        const cars = Array.isArray(json) ? json : json.data || [];
 
-    h.appendChild(createHeader("ID"));
-    h.appendChild(createHeader("Name"));
-    h.appendChild(createHeader("Type"));
-    h.appendChild(createHeader("Model"));
-    h.appendChild(createHeader("Price"));
-    h.appendChild(createHeader("Image"));
-    h.appendChild(createHeader("Feature1"));
-    h.appendChild(createHeader("Feature2"));
-    h.appendChild(createHeader("Feature3"));
+        console.log("CARS FROM DB:", cars);
 
-    adminContent.appendChild(h);
+        // ----- headers -----
+        const h = document.createElement("div");
+        h.classList.add("car-titles");
 
-    cars.forEach(car => {
-        console.log("IMAGE VALUE:", car.image);
-        console.log("IMAGE RAW:", car.image);
-        console.log("TYPE:", typeof car.image);
+        ["ID", "Name", "Type", "Model", "Price", "Image", "Feature1", "Feature2", "Feature3"]
+            .forEach(t => h.appendChild(createHeader(t)));
 
-        const r = document.createElement("div");
-        r.classList.add("car-row");
+        adminContent.appendChild(h);
 
-        r.appendChild(createCell(car.id));
-        r.appendChild(createCell(car.name));
-        r.appendChild(createCell(car.type));
-        r.appendChild(createCell(car.model));
-        r.appendChild(createCell(car.price));
+        // ----- rows -----
+        cars.forEach(car => {
+            const r = document.createElement("div");
+            r.classList.add("car-row");
 
-        // visa bild
-        const imgCell = document.createElement("div");
-        const img = document.createElement("img");
-        img.src = "data:image/jpeg;base64," + car.image;
-        img.classList.add("car-image");
-        imgCell.appendChild(img);
-        r.appendChild(imgCell);
+            r.appendChild(createCell(car.id));
+            r.appendChild(createCell(car.name));
+            r.appendChild(createCell(car.type));
+            r.appendChild(createCell(car.model));
+            r.appendChild(createCell(car.price));
 
-        r.appendChild(createCell(car.feature1));
-        r.appendChild(createCell(car.feature2));
-        r.appendChild(createCell(car.feature3));
+            // ----- image -----
+            const imgCell = document.createElement("div");
+            const img = document.createElement("img");
 
-        adminContent.appendChild(r);
-    });
+            if (car.image) {
+                img.src = "data:image/jpeg;base64," + car.image;
+            }
 
+            img.classList.add("car-image");
+            imgCell.appendChild(img);
+            r.appendChild(imgCell);
+
+            r.appendChild(createCell(car.feature1));
+            r.appendChild(createCell(car.feature2));
+            r.appendChild(createCell(car.feature3));
+
+            adminContent.appendChild(r);
+        });
+
+    } catch (err) {
+        console.error("Error loading cars:", err);
+        adminContent.textContent = "Fel inträffade vid hämtning av bilar.";
+    }
+
+
+    // --------- helpers ---------
     function createHeader(text) {
         const d = document.createElement("div");
         d.textContent = text;
         return d;
     }
 
-    function createCell(text) {
+    function createCell(value) {
         const d = document.createElement("div");
-        d.textContent = text;
+        d.textContent = value ?? "-";
         return d;
     }
 }
+
+
 
 async function loadBookings() {
+
+    // comment: safety check
+    if (!adminContent) {
+        console.error("adminContent not found (loadBookings)");
+        return;
+    }
+
     adminContent.innerHTML = "";
 
-    const response = await fetch("/api/admin/bookings");
-    const bookings = await response.json();
-    const h = document.createElement("div");
+    try {
+        const response = await fetch("/api/admin/bookings", {
+            credentials: "include"   // comment: send session cookie
+        });
 
-    h.classList.add("booking-titles");
+        if (!response.ok) {
+            console.error("Failed to load bookings (status):", response.status);
+            adminContent.textContent = "Kunde inte hämta bokningar.";
+            return;
+        }
 
-    h.appendChild(createHeader("ID"));
-    h.appendChild(createHeader("Active"));
-    h.appendChild(createHeader("Car"));
-    h.appendChild(createHeader("User"));
-    h.appendChild(createHeader("From"));
-    h.appendChild(createHeader("To"));
-    h.appendChild(createHeader("Price"));
+        const json = await response.json();
+        const bookings = Array.isArray(json) ? json : json.data || [];
 
-    adminContent.appendChild(h);
+        console.log("BOOKINGS FROM DB:", bookings);
 
-    bookings.forEach(b => {
-        const r = document.createElement("div");
-        r.classList.add("booking-row");
+        // ----- headers -----
+        const h = document.createElement("div");
+        h.classList.add("booking-titles");
 
-        r.appendChild(createCell(b.id));
-        r.appendChild(createCell(b.active));
-        r.appendChild(createCell(b.car?.name ?? "-"));
-        r.appendChild(createCell(b.user?.username ?? "-"));
-        r.appendChild(createCell(b.fromDate ?? "-"));
-        r.appendChild(createCell(b.toDate ?? "-"));
-        r.appendChild(createCell("-"));
+        ["ID", "Active", "Car", "User", "From", "To", "Price"]
+            .forEach(t => h.appendChild(createHeader(t)));
 
-        adminContent.appendChild(r);
-    });
+        adminContent.appendChild(h);
 
+        // ----- rows -----
+        bookings.forEach(b => {
+            const r = document.createElement("div");
+            r.classList.add("booking-row");
+
+            r.appendChild(createCell(b.id));
+            r.appendChild(createCell(b.active));
+            r.appendChild(createCell(b.car?.name ?? "-"));
+            r.appendChild(createCell(b.user?.username ?? "-"));
+            r.appendChild(createCell(b.fromDate ?? "-"));
+            r.appendChild(createCell(b.toDate ?? "-"));
+            r.appendChild(createCell(b.price ?? "-"));
+
+            adminContent.appendChild(r);
+        });
+
+    } catch (err) {
+        console.error("Error loading bookings:", err);
+        adminContent.textContent = "Fel inträffade vid hämtning av bokningar.";
+    }
+
+    // ----- helpers -----
     function createHeader(text) {
         const d = document.createElement("div");
         d.textContent = text;
         return d;
     }
 
-    function createCell(text) {
+    function createCell(value) {
         const d = document.createElement("div");
-        d.textContent = text ?? "-";
+        d.textContent = value ?? "-";
         return d;
     }
 }
-
 

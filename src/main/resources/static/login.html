@@ -12,22 +12,21 @@
 
     <div class="login-title">Logga in</div>
 
-    <div class="login-box">
-        <input type="text" id="username" class="input" placeholder="Användarnamn">
-        <input type="password" id="password" class="input" placeholder="Lösenord">
-        <button id="loginBtn" class="login-btn">Logga in</button>
-    </div>
+    <form class="login-box" method="POST" action="/login">
+        <input type="text" id="username" name="username" class="input" placeholder="Användarnamn" required>
+        <input type="password" id="password" name="password" class="input" placeholder="Lösenord" required>
+        <button type="submit" id="loginBtn" class="login-btn">Logga in</button>
+    </form>
 
     <div id="loginError" class="login-error"></div>
 
 </div>
 
-
-<div class="login-footer">
+<div class="footer">
     <div class="ad-space">
         <img src="/KoncernensLogga.png" alt="Reklam" />
     </div>
-    </div>
+</div>
 
 <script src="/login.js"></script>
 

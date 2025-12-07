@@ -47,8 +47,6 @@ function redirectUser(user) {
     }
 }
 
-
-
 function showError(msg) {
     document.getElementById("loginError").textContent = msg;
 }

@@ -1,6 +1,6 @@
 const logoutBtn = document.getElementById("logoutBtn");
 const usernameDisplay = document.getElementById("usernameDisplay");
-const adminContent=document.getElementById("adminContent")
+const adminContent=document.getElementById("admin-content")
 const menuItems = document.querySelectorAll(".menu-item");
 
 logoutBtn.addEventListener("click", () => {

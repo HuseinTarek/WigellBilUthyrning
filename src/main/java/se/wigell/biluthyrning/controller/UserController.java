@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import se.wigell.biluthyrning.model.Booking;
+import se.wigell.biluthyrning.model.Car;
 import se.wigell.biluthyrning.service.BookingService;
+import se.wigell.biluthyrning.service.CarService;
 import se.wigell.biluthyrning.service.UserService;
 import se.wigell.biluthyrning.model.User;
 
@@ -22,32 +24,12 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final BookingService bookingService;
-    public UserController(UserService userService, BookingService bookingService) {
+    private final CarService carService;
+    public UserController(UserService userService, BookingService bookingService, CarService carService) {
         this.userService = userService;
         this.bookingService = bookingService;
+        this.carService = carService;
     }
-
-//    @PostMapping("/login")
-//    public User login(@RequestBody LoginRequest credentials) {
-//        System.out.println("USERNAME = " + credentials.getUsername());
-//        System.out.println("PASSWORD = " + credentials.getPassword());
-//        return userService.validateLogin(credentials.getUsername(), credentials.getPassword());
-//    }
-
-//    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
-//        log.info("Login attempt for username='{}'", loginRequest.getUsername());
-//        User user = userService.validateLogin(loginRequest.getUsername(), loginRequest.getPassword());
-//        if (user != null) {
-//            log.info("Login successful for username='{}'", loginRequest.getUsername());
-//            return ResponseEntity.ok(user);
-//        } else {
-//            log.warn("Login failed for username='{}'", loginRequest.getUsername());
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//    }
-
-
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
@@ -76,6 +58,17 @@ public class UserController {
     @GetMapping("/my-bookings")
     public List<Booking> getMyBookings(Authentication auth) {
         return bookingService.getBookingsForUser(auth.getName());
+    }
+
+
+    @GetMapping("/cars")
+    public List<Car> getCars() {
+        return carService.getAllCars();
+    }
+
+    @GetMapping("/bookings")
+    public List<Booking> getBookings() {
+        return bookingService.getAllBookings();
     }
 
 }

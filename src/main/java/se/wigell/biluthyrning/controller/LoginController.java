@@ -1,8 +1,15 @@
 package se.wigell.biluthyrning.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import se.wigell.biluthyrning.service.UserService;
 import se.wigell.biluthyrning.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/login")
@@ -14,15 +21,29 @@ public class LoginController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public User login(@RequestParam String username, @RequestParam String password) {
+    @PostMapping("/login")
+    public User login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
-        System.out.println("=== LOGIN ATTEMPT ===");
-        System.out.println("USERNAME: " + username);
-        System.out.println("PASSWORD: " + password);
+        User user = userService.validateLogin(request.getUsername(), request.getPassword());
 
-        return userService.validateLogin(username, password);
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(
+                        user.getUsername(),
+                        null,
+                        List.of(() -> "ROLE_" + user.getRole())
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        // IMPORTANT: store security context in session
+        HttpSession session = httpRequest.getSession(true);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+        return user;
     }
+
+
+
 
 
 

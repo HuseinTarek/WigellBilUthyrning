@@ -40,6 +40,7 @@ async function loadUsers() {
 
     adminContent.innerHTML = "";
 
+    // ---- sorting bar ----
     const sortingBar = document.createElement("div");
     sortingBar.classList.add("sorting-bar");
 
@@ -64,25 +65,23 @@ async function loadUsers() {
         <option value="username-asc">Användarnamn A–Ö</option>
         <option value="username-desc">Användarnamn Ö–A</option>
     </select>
-`;
+    `;
 
     adminContent.appendChild(sortingBar);
 
-    // نحصل على الريفرنس بعد ما نضيف الـ HTML
     const sortSelect = document.getElementById("sortSelect");
-    // نخلي القيمة اللي اختارها المستخدم آخر مرة
+
     sortSelect.value = currentSort;
 
-    // لما يغيّر السورت
     sortSelect.onchange = () => {
-        currentSort = sortSelect.value; // خزّن الاختيار
-        loadUsers();                     // أعد تحميل القائمة
+        currentSort = sortSelect.value;
+        loadUsers();
     };
 
-
     try {
+
         const response = await fetch("/api/admin/users", {
-            credentials: "include"   // comment: send session cookie
+            credentials: "include"
         });
 
         if (!response.ok) {
@@ -94,53 +93,12 @@ async function loadUsers() {
         const json = await response.json();
         const users = Array.isArray(json) ? json : json.data || [];
 
-        switch (currentSort) {
-            case "id-asc":
-                users.sort((a, b) => a.id - b.id);
-                break;
-            case "id-desc":
-                users.sort((a, b) => b.id - a.id);
-                break;
-
-            case "email-asc":
-                users.sort((a, b) => a.email.localeCompare(b.email, "sv"));
-                break;
-            case "email-desc":
-                users.sort((a, b) => b.email.localeCompare(a.email, "sv"));
-                break;
-
-            case "first-name-asc":
-                users.sort((a, b) => a.firstName.localeCompare(b.firstName, "sv"));
-                break;
-            case "first-name-desc":
-                users.sort((a, b) => b.firstName.localeCompare(a.firstName, "sv"));
-                break;
-
-            case "last-name-asc":
-                users.sort((a, b) => a.lastName.localeCompare(b.lastName, "sv"));
-                break;
-            case "last-name-desc":
-                users.sort((a, b) => b.lastName.localeCompare(a.lastName, "sv"));
-                break;
-
-            case "phone-asc":
-                users.sort((a, b) => (a.phone || "").localeCompare(b.phone || "", "sv"));
-                break;
-            case "phone-desc":
-                users.sort((a, b) => (b.phone || "").localeCompare(a.phone || "", "sv"));
-                break;
-
-            case "username-asc":
-                users.sort((a, b) => a.username.localeCompare(b.username, "sv"));
-                break;
-            case "username-desc":
-                users.sort((a, b) => b.username.localeCompare(a.username, "sv"));
-                break;
-        }
+        // --------- APPLY SORTING HERE ---------
+        sortUsersList(users, currentSort);
 
         console.log("USERS FROM DB:", users);
 
-        // ----- titles -----
+        // ---- titles ----
         const h = document.createElement("div");
         h.classList.add("user-titles");
 
@@ -149,7 +107,7 @@ async function loadUsers() {
 
         adminContent.appendChild(h);
 
-        // ----- rows -----
+        // ---- rows ----
         users.forEach(u => {
             const r = document.createElement("div");
             r.classList.add("user-row");
@@ -169,7 +127,8 @@ async function loadUsers() {
         adminContent.textContent = "Fel inträffade vid hämtning av användare.";
     }
 
-    // ----- helpers -----
+
+    // ---- helpers ----
     function createHeader(text) {
         const d = document.createElement("div");
         d.textContent = text;
@@ -184,6 +143,61 @@ async function loadUsers() {
 }
 
 
+function sortUsersList(users, sortKey) {
+
+    switch (sortKey) {
+
+        case "id-asc":
+            users.sort((a, b) => a.id - b.id);
+            break;
+
+        case "id-desc":
+            users.sort((a, b) => b.id - a.id);
+            break;
+
+        case "email-asc":
+            users.sort((a, b) => a.email.localeCompare(b.email, "sv"));
+            break;
+
+        case "email-desc":
+            users.sort((a, b) => b.email.localeCompare(a.email, "sv"));
+            break;
+
+        case "first-name-asc":
+            users.sort((a, b) => a.firstName.localeCompare(b.firstName, "sv"));
+            break;
+
+        case "first-name-desc":
+            users.sort((a, b) => b.firstName.localeCompare(a.firstName, "sv"));
+            break;
+
+        case "last-name-asc":
+            users.sort((a, b) => a.lastName.localeCompare(b.lastName, "sv"));
+            break;
+
+        case "last-name-desc":
+            users.sort((a, b) => b.lastName.localeCompare(a.lastName, "sv"));
+            break;
+
+        case "phone-asc":
+            users.sort((a, b) => (a.phone || "").localeCompare(b.phone || "", "sv"));
+            break;
+
+        case "phone-desc":
+            users.sort((a, b) => (b.phone || "").localeCompare(a.phone || "", "sv"));
+            break;
+
+        case "username-asc":
+            users.sort((a, b) => a.username.localeCompare(b.username, "sv"));
+            break;
+
+        case "username-desc":
+            users.sort((a, b) => b.username.localeCompare(a.username, "sv"));
+            break;
+    }
+}
+
+
 async function loadCars() {
 
     // comment: safety check
@@ -193,6 +207,48 @@ async function loadCars() {
     }
 
     adminContent.innerHTML = "";
+
+    // -------------------------------------------------
+    // comment: Create sorting bar
+    // -------------------------------------------------
+    const sortingBar = document.createElement("div");
+    sortingBar.classList.add("sorting-bar");
+
+    sortingBar.innerHTML = `
+    <label>Sortera:</label>
+    <select id="sortCars">
+        <option value="id-asc">ID 1–9</option>
+        <option value="id-desc">ID 9–1</option>
+
+        <option value="name-asc">Name A–Ö</option>
+        <option value="name-desc">Name Ö–A</option>
+
+        <option value="type-asc">Type A–Ö</option>
+        <option value="type-desc">Type Ö–A</option>
+
+        <option value="model-asc">Model A–Ö</option>
+        <option value="model-desc">Model Ö–A</option>
+
+        <option value="price-asc">Price Low → High</option>
+        <option value="price-desc">Price High → Low</option>
+    </select>
+    `;
+
+    adminContent.appendChild(sortingBar);
+
+    // comment: default sort if nothing saved
+    if (!window.currentCarSort) {
+        window.currentCarSort = "id-asc";
+    }
+
+    const sortSelect = document.getElementById("sortCars");
+    sortSelect.value = window.currentCarSort;
+
+    sortSelect.onchange = () => {
+        window.currentCarSort = sortSelect.value;
+        loadCars(); // comment: reload with new sorting
+    };
+
 
     try {
         const response = await fetch("/api/admin/cars", {
@@ -207,6 +263,11 @@ async function loadCars() {
 
         const json = await response.json();
         const cars = Array.isArray(json) ? json : json.data || [];
+
+        // -------------------------------------------------
+        // comment: IMPORTANT — Apply sorting here
+        // -------------------------------------------------
+        sortCarsList(cars, window.currentCarSort);
 
         console.log("CARS FROM DB:", cars);
 
@@ -251,7 +312,7 @@ async function loadCars() {
 
     } catch (err) {
         console.error("Error loading cars:", err);
-        adminContent.textContent = "Fel inträffade vid hämtning av bilar.";
+        adminContent.textContent = "Fel inträffade vid hämtning av بilar.";
     }
 
 
@@ -271,9 +332,50 @@ async function loadCars() {
 
 
 
+
+function sortCarsList(cars, sortKey) {
+    // comment: handle all sorting cases
+    switch (sortKey) {
+        case "id-asc":
+            return cars.sort((a, b) => a.id - b.id);
+
+        case "id-desc":
+            return cars.sort((a, b) => b.id - a.id);
+
+        case "name-asc":
+            return cars.sort((a, b) => a.name.localeCompare(b.name, "sv"));
+
+        case "name-desc":
+            return cars.sort((a, b) => b.name.localeCompare(a.name, "sv"));
+
+        case "type-asc":
+            return cars.sort((a, b) => a.type.localeCompare(b.type, "sv"));
+
+        case "type-desc":
+            return cars.sort((a, b) => b.type.localeCompare(a.type, "sv"));
+
+        case "model-asc":
+            return cars.sort((a, b) => a.model.localeCompare(b.model, "sv"));
+
+        case "model-desc":
+            return cars.sort((a, b) => b.model.localeCompare(a.model, "sv"));
+
+        case "price-asc":
+            return cars.sort((a, b) => a.price - b.price);
+
+        case "price-desc":
+            return cars.sort((a, b) => b.price - a.price);
+
+        default:
+            return cars;
+    }
+}
+
+
+
+
 async function loadBookings() {
 
-    // comment: safety check
     if (!adminContent) {
         console.error("adminContent not found (loadBookings)");
         return;
@@ -281,19 +383,68 @@ async function loadBookings() {
 
     adminContent.innerHTML = "";
 
+    // ----- sorting bar -----
+    const sortingBar = document.createElement("div");
+    sortingBar.classList.add("sorting-bar");
+
+    sortingBar.innerHTML = `
+    <label>Sortera:</label>
+    <select id="sortBookings">
+        <option value="id-asc">ID 1–9</option>
+        <option value="id-desc">ID 9–1</option>
+
+        <option value="active-asc">Active Off → On</option>
+        <option value="active-desc">Active On → Off</option>
+
+        <option value="car-asc">Car A–Ö</option>
+        <option value="car-desc">Car Ö–A</option>
+
+        <option value="user-asc">User A–Ö</option>
+        <option value="user-desc">User Ö–A</option>
+
+        <option value="from-asc">From ↑</option>
+        <option value="from-desc">From ↓</option>
+
+        <option value="to-asc">To ↑</option>
+        <option value="to-desc">To ↓</option>
+
+        <option value="price-asc">Price Low → High</option>
+        <option value="price-desc">Price High → Low</option>
+    </select>
+    `;
+
+    adminContent.appendChild(sortingBar);
+
+    if (!window.currentBookingSort) {
+        window.currentBookingSort = "id-asc"; // comment: default
+    }
+
+    const sortSelect = document.getElementById("sortBookings");
+    sortSelect.value = window.currentBookingSort;
+
+    sortSelect.onchange = () => {
+        window.currentBookingSort = sortSelect.value;
+        loadBookings(); // comment: reload sorted list
+    };
+
+
+    // ----- fetch data -----
     try {
         const response = await fetch("/api/admin/bookings", {
-            credentials: "include"   // comment: send session cookie
+            credentials: "include"
         });
 
         if (!response.ok) {
-            console.error("Failed to load bookings (status):", response.status);
+            console.error("Failed to load bookings:", response.status);
             adminContent.textContent = "Kunde inte hämta bokningar.";
             return;
         }
 
         const json = await response.json();
         const bookings = Array.isArray(json) ? json : json.data || [];
+
+        // ----- apply sorting -----
+        sortBookingsList(bookings, window.currentBookingSort);
 
         console.log("BOOKINGS FROM DB:", bookings);
 
@@ -327,6 +478,7 @@ async function loadBookings() {
         adminContent.textContent = "Fel inträffade vid hämtning av bokningar.";
     }
 
+
     // ----- helpers -----
     function createHeader(text) {
         const d = document.createElement("div");
@@ -340,4 +492,68 @@ async function loadBookings() {
         return d;
     }
 }
+
+
+function sortBookingsList(bookings, sortKey) {
+
+    switch (sortKey) {
+
+        case "id-asc":
+            bookings.sort((a, b) => a.id - b.id);
+            break;
+
+        case "id-desc":
+            bookings.sort((a, b) => b.id - a.id);
+            break;
+
+        case "active-asc":
+            bookings.sort((a, b) => Number(a.active) - Number(b.active));
+            break;
+
+        case "active-desc":
+            bookings.sort((a, b) => Number(b.active) - Number(a.active));
+            break;
+
+        case "car-asc":
+            bookings.sort((a, b) => (a.car?.name ?? "").localeCompare(b.car?.name ?? "", "sv"));
+            break;
+
+        case "car-desc":
+            bookings.sort((a, b) => (b.car?.name ?? "").localeCompare(a.car?.name ?? "", "sv"));
+            break;
+
+        case "user-asc":
+            bookings.sort((a, b) => (a.user?.username ?? "").localeCompare(b.user?.username ?? "", "sv"));
+            break;
+
+        case "user-desc":
+            bookings.sort((a, b) => (b.user?.username ?? "").localeCompare(a.user?.username ?? "", "sv"));
+            break;
+
+        case "from-asc":
+            bookings.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate));
+            break;
+
+        case "from-desc":
+            bookings.sort((a, b) => new Date(b.fromDate) - new Date(a.fromDate));
+            break;
+
+        case "to-asc":
+            bookings.sort((a, b) => new Date(a.toDate) - new Date(b.toDate));
+            break;
+
+        case "to-desc":
+            bookings.sort((a, b) => new Date(b.toDate) - new Date(a.toDate));
+            break;
+
+        case "price-asc":
+            bookings.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+            break;
+
+        case "price-desc":
+            bookings.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+            break;
+    }
+}
+
 

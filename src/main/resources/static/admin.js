@@ -2,6 +2,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 const usernameDisplay = document.getElementById("usernameDisplay");
 const adminContent=document.getElementById("adminContent")
 const menuItems = document.querySelectorAll(".menu-item");
+let currentSort = "id-asc";
 
 let adminSort = {
     column: null,
@@ -32,13 +33,52 @@ menuItems.forEach(item => {
 
 async function loadUsers() {
 
-    // comment: safety check
     if (!adminContent) {
         console.error("adminContent not found (loadUsers)");
         return;
     }
 
     adminContent.innerHTML = "";
+
+    const sortingBar = document.createElement("div");
+    sortingBar.classList.add("sorting-bar");
+
+    sortingBar.innerHTML = `
+    <label>Sortera:</label>
+    <select id="sortSelect">
+        <option value="id-asc">ID 1–9</option>
+        <option value="id-desc">ID 9–1</option>
+        
+        <option value="email-asc">Email A–Ö</option>
+        <option value="email-desc">Email Ö–A</option>
+        
+        <option value="first-name-asc">Förnamn A–Ö</option>
+        <option value="first-name-desc">Förnamn Ö–A</option>
+        
+        <option value="last-name-asc">Efternamn A–Ö</option>
+        <option value="last-name-desc">Efternamn Ö–A</option>
+        
+        <option value="phone-asc">Telefonnummer 0–9</option>
+        <option value="phone-desc">Telefonnummer 9–0</option>
+        
+        <option value="username-asc">Användarnamn A–Ö</option>
+        <option value="username-desc">Användarnamn Ö–A</option>
+    </select>
+`;
+
+    adminContent.appendChild(sortingBar);
+
+    // نحصل على الريفرنس بعد ما نضيف الـ HTML
+    const sortSelect = document.getElementById("sortSelect");
+    // نخلي القيمة اللي اختارها المستخدم آخر مرة
+    sortSelect.value = currentSort;
+
+    // لما يغيّر السورت
+    sortSelect.onchange = () => {
+        currentSort = sortSelect.value; // خزّن الاختيار
+        loadUsers();                     // أعد تحميل القائمة
+    };
+
 
     try {
         const response = await fetch("/api/admin/users", {
@@ -53,6 +93,50 @@ async function loadUsers() {
 
         const json = await response.json();
         const users = Array.isArray(json) ? json : json.data || [];
+
+        switch (currentSort) {
+            case "id-asc":
+                users.sort((a, b) => a.id - b.id);
+                break;
+            case "id-desc":
+                users.sort((a, b) => b.id - a.id);
+                break;
+
+            case "email-asc":
+                users.sort((a, b) => a.email.localeCompare(b.email, "sv"));
+                break;
+            case "email-desc":
+                users.sort((a, b) => b.email.localeCompare(a.email, "sv"));
+                break;
+
+            case "first-name-asc":
+                users.sort((a, b) => a.firstName.localeCompare(b.firstName, "sv"));
+                break;
+            case "first-name-desc":
+                users.sort((a, b) => b.firstName.localeCompare(a.firstName, "sv"));
+                break;
+
+            case "last-name-asc":
+                users.sort((a, b) => a.lastName.localeCompare(b.lastName, "sv"));
+                break;
+            case "last-name-desc":
+                users.sort((a, b) => b.lastName.localeCompare(a.lastName, "sv"));
+                break;
+
+            case "phone-asc":
+                users.sort((a, b) => (a.phone || "").localeCompare(b.phone || "", "sv"));
+                break;
+            case "phone-desc":
+                users.sort((a, b) => (b.phone || "").localeCompare(a.phone || "", "sv"));
+                break;
+
+            case "username-asc":
+                users.sort((a, b) => a.username.localeCompare(b.username, "sv"));
+                break;
+            case "username-desc":
+                users.sort((a, b) => b.username.localeCompare(a.username, "sv"));
+                break;
+        }
 
         console.log("USERS FROM DB:", users);
 

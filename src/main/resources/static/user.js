@@ -42,7 +42,6 @@ async function loadCars() {
 
     userContent.innerHTML = "";
 
-    // شريط السورت
     const sortingBar = document.createElement("div");
     sortingBar.classList.add("sorting-bar");
     sortingBar.innerHTML = `
@@ -140,6 +139,7 @@ function sortCars(cars, rule) {
             return cars;
     }
 }
+
 
 async function loadBookings() {
     if (!userContent) return;

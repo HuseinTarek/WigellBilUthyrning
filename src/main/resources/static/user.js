@@ -19,7 +19,10 @@ menuItems.forEach(item => {
                 break;
             case "bookings":
                 loadBookings();
-                break
+                break;
+            case "cart":
+                loadCart();
+                break;
         }
     })
 })
@@ -120,8 +123,61 @@ async function loadCars() {
             row.appendChild(d);
         });
 
+        const chooseCell = document.createElement("div");
+        const chooseBtn = document.createElement("button");
+        chooseBtn.textContent = "Välj bil"; // اختر سيارة
+        chooseBtn.onclick = () => {
+            addToCart(car);
+            loadCart();
+        };
+
+        chooseCell.appendChild(chooseBtn);
+        row.appendChild(chooseCell);
+
         userContent.appendChild(row);
     });
+}
+
+function addToCart(car) {
+    localStorage.setItem("selectedCar", JSON.stringify(car));
+}
+
+function loadCart() {
+    userContent.innerHTML = "";
+    const storedCar = localStorage.getItem("selectedCar");
+    if (!storedCar) {
+        userContent.innerHTML = `<div class="empty">Inga bilar valda</div>`;
+        return;
+    }
+    const car = JSON.parse(storedCar);
+    const box = document.createElement("div");
+    box.classList.add("cart-box");
+
+    // Build HTML content
+    box.innerHTML = `
+        <h2>Din beställning</h2>
+
+        <div class="cart-item">
+            <p><strong>Bil:</strong> ${car.name}</p>
+            <p><strong>Typ:</strong> ${car.type}</p>
+            <p><strong>Model:</strong> ${car.model}</p>
+            <p><strong>Pris:</strong> ${car.price} kr / dag</p>
+        </div>
+
+        <button id="confirmBtn">Bekräfta bokning</button>
+        <button id="clearBtn">Ta bort från korg</button>
+    `;
+    userContent.appendChild(box);
+
+    document.getElementById("clearBtn").onclick = () => {
+        localStorage.removeItem("selectedCar");
+        loadCart();
+    };
+
+    document.getElementById("confirmBtn").onclick = async () => {
+        alert("Bokning skickad!");
+    };
+
 }
 
 

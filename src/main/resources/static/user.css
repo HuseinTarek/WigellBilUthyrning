@@ -97,13 +97,23 @@ body {
 .car-row {
     display: grid;
     grid-template-columns:
-        60px 150px 120px 120px 100px 150px 120px 120px 120px;
+        60px 150px 120px 120px 100px 150px 120px 220px 150px 120px;
     gap: 8px;
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid #334155;
 }
 .car-titles { font-weight: 700; color: #e6eefc; }
+
+.car-row button {
+    background-color: #16a34a; /* green */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
 
 .booking-titles,
 .booking-row {

@@ -6,6 +6,18 @@
     gap: 20px;
 }
 
+
+.styleguide-link {
+    color: #a78bfa; /* soft purple */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.styleguide-link:hover {
+    color: #c4b5fd;
+    text-decoration: underline;
+}
+
 .user-titles,
 .user-row {
     display: grid;
@@ -20,6 +32,8 @@
     border-bottom: 1px solid #334155;
 }
 
+
+
 .user-titles {
     font-weight: bold;
     color: #3b82f6;
@@ -29,15 +43,16 @@
 .car-row {
     display: grid;
     grid-template-columns:
-        60px
-        150px
-        120px
-        120px
-        100px
-        150px
-        200px
-        200px
-        200px;
+        40px      /* id */
+        100px       /* type */
+        100px     /* model */
+        80px     /* price */
+        60px     /* image */
+        1.2fr      /* feature1 */
+        2fr      /* feature2 */
+        2fr/* feature3 */
+    1fr;
+
     padding: 10px 0;
     border-bottom: 1px solid #334155;
 }

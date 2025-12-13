@@ -48,16 +48,18 @@ public class SecurityConfig {
                                 "/",
                                 "/login.html",
                                 "/user.html",
-                                "/admin.html",
+                          //      "/admin.html",
                                 "/login.js",
                                 "/user.js",
-                                "/admin.js",
+                           //     "/admin.js",
                                 "/global.css",
                                 "/login.css",
                                 "/user.css",
-                                "/admin.css",
+                            //    "/admin.css",
                                 "/KoncernensLogga.png"
                         ).permitAll()
+
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // admin endpoints require ADMIN
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

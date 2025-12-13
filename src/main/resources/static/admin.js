@@ -32,114 +32,93 @@ menuItems.forEach(item => {
 
 
 async function loadUsers() {
-
-    if (!adminContent) {
-        console.error("adminContent not found (loadUsers)");
-        return;
-    }
+    if (!adminContent) return;
 
     adminContent.innerHTML = "";
-
-    // ---- sorting bar ----
-    const sortingBar = document.createElement("div");
-    sortingBar.classList.add("sorting-bar");
-
-    sortingBar.innerHTML = `
-    <label>Sortera:</label>
-    <select id="sortSelect">
-        <option value="id-asc">ID 1–9</option>
-        <option value="id-desc">ID 9–1</option>
-        
-        <option value="email-asc">Email A–Ö</option>
-        <option value="email-desc">Email Ö–A</option>
-        
-        <option value="first-name-asc">Förnamn A–Ö</option>
-        <option value="first-name-desc">Förnamn Ö–A</option>
-        
-        <option value="last-name-asc">Efternamn A–Ö</option>
-        <option value="last-name-desc">Efternamn Ö–A</option>
-        
-        <option value="phone-asc">Telefonnummer 0–9</option>
-        <option value="phone-desc">Telefonnummer 9–0</option>
-        
-        <option value="username-asc">Användarnamn A–Ö</option>
-        <option value="username-desc">Användarnamn Ö–A</option>
-    </select>
-    `;
-
-    adminContent.appendChild(sortingBar);
-
-    const sortSelect = document.getElementById("sortSelect");
-
-    sortSelect.value = currentSort;
-
-    sortSelect.onchange = () => {
-        currentSort = sortSelect.value;
-        loadUsers();
-    };
+    renderSortingBar();
 
     try {
-
-        const response = await fetch("/api/admin/users", {
-            credentials: "include"
-        });
-
-        if (!response.ok) {
-            console.error("Failed to load users:", response.status);
-            adminContent.textContent = "Kunde inte hämta användare.";
-            return;
-        }
-
-        const json = await response.json();
-        const users = Array.isArray(json) ? json : json.data || [];
-
-        // --------- APPLY SORTING HERE ---------
+        const users = await fetchUsers();
         sortUsersList(users, currentSort);
+        renderUsersTable(users);
+    } catch (e) {
+        adminContent.textContent = "خطأ أثناء جلب المستخدمين";
+    }
+}
 
-        console.log("USERS FROM DB:", users);
+/* ---------- data ---------- */
+async function fetchUsers() {
+    const res = await fetch("/api/admin/users", { credentials: "include" });
+    if (!res.ok) throw new Error("Fetch failed");
+    const json = await res.json();
 
-        // ---- titles ----
-        const h = document.createElement("div");
-        h.classList.add("user-titles");
-
-        ["ID", "Email", "First Name", "Last Name", "Phone", "Username"]
-            .forEach(t => h.appendChild(createHeader(t)));
-
-        adminContent.appendChild(h);
-
-        // ---- rows ----
-        users.forEach(u => {
-            const r = document.createElement("div");
-            r.classList.add("user-row");
-
-            r.appendChild(createCell(u.id));
-            r.appendChild(createCell(u.email));
-            r.appendChild(createCell(u.firstName));
-            r.appendChild(createCell(u.lastName));
-            r.appendChild(createCell(u.phone));
-            r.appendChild(createCell(u.username));
-
-            adminContent.appendChild(r);
-        });
-
-    } catch (err) {
-        console.error("Error loading users:", err);
-        adminContent.textContent = "Fel inträffade vid hämtning av användare.";
+    if (Array.isArray(json)) {
+        return json;
     }
 
-
-    // ---- helpers ----
-    function createHeader(text) {
-        const d = document.createElement("div");
-        d.textContent = text;
-        return d;
+    if (json.data) {
+        return json.data;
     }
 
-    function createCell(value) {
-        const d = document.createElement("div");
-        d.textContent = value ?? "-";
-        return d;
-    }
+    return [];
+}
+
+function renderSortingBar() {
+    const bar = document.createElement("div");
+    bar.classList.add("sorting-bar");
+    bar.innerHTML = `
+        <label>Sortera:</label>
+        <select id="sortSelect">
+            <option value="id-asc">ID 1–9</option>
+            <option value="id-desc">ID 9–1</option>
+            <option value="email-asc">Email A–Ö</option>
+            <option value="email-desc">Email Ö–A</option>
+            <option value="first-name-asc">Förnamn A–Ö</option>
+            <option value="first-name-desc">Förnamn Ö–A</option>
+            <option value="last-name-asc">Efternamn A–Ö</option>
+            <option value="last-name-desc">Efternamn Ö–A</option>
+            <option value="phone-asc">Telefonnummer 0–9</option>
+            <option value="phone-desc">Telefonnummer 9–0</option>
+            <option value="username-asc">Användarnamn A–Ö</option>
+            <option value="username-desc">Användarnamn Ö–A</option>
+        </select>
+    `;
+    adminContent.appendChild(bar);
+
+    const select = bar.querySelector("#sortSelect");
+    select.value = currentSort;
+    select.onchange = () => {
+        currentSort = select.value;
+        loadUsers();
+    };
+}
+
+function renderUsersTable(users) {
+    renderHeaders();
+    users.forEach(renderUserRow);
+}
+
+function renderHeaders() {
+    const row = document.createElement("div");
+    row.classList.add("user-titles");
+    ["ID", "Email", "First Name", "Last Name", "Phone", "Username"]
+        .forEach(t => row.appendChild(createCell(t)));
+    adminContent.appendChild(row);
+}
+
+function renderUserRow(u) {
+    const row = document.createElement("div");
+    row.classList.add("user-row");
+    [u.id, u.email, u.firstName, u.lastName, u.phone, u.username]
+        .forEach(v => row.appendChild(createCell(v)));
+    adminContent.appendChild(row);
+}
+
+/* ---------- helpers ---------- */
+function createCell(value) {
+    const d = document.createElement("div");
+    d.textContent = value ?? "-";
+    return d;
 }
 
 
@@ -199,136 +178,99 @@ function sortUsersList(users, sortKey) {
 
 
 async function loadCars() {
-
-    // comment: safety check
-    if (!adminContent) {
-        console.error("adminContent not found (loadCars)");
-        return;
-    }
+    if (!adminContent) return;
 
     adminContent.innerHTML = "";
-
-    // -------------------------------------------------
-    // comment: Create sorting bar
-    // -------------------------------------------------
-    const sortingBar = document.createElement("div");
-    sortingBar.classList.add("sorting-bar");
-
-    sortingBar.innerHTML = `
-    <label>Sortera:</label>
-    <select id="sortCars">
-        <option value="id-asc">ID 1–9</option>
-        <option value="id-desc">ID 9–1</option>
-
-        <option value="name-asc">Name A–Ö</option>
-        <option value="name-desc">Name Ö–A</option>
-
-        <option value="type-asc">Type A–Ö</option>
-        <option value="type-desc">Type Ö–A</option>
-
-        <option value="model-asc">Model A–Ö</option>
-        <option value="model-desc">Model Ö–A</option>
-
-        <option value="price-asc">Price Low → High</option>
-        <option value="price-desc">Price High → Low</option>
-    </select>
-    `;
-
-    adminContent.appendChild(sortingBar);
-
-    // comment: default sort if nothing saved
-    if (!window.currentCarSort) {
-        window.currentCarSort = "id-asc";
-    }
-
-    const sortSelect = document.getElementById("sortCars");
-    sortSelect.value = window.currentCarSort;
-
-    sortSelect.onchange = () => {
-        window.currentCarSort = sortSelect.value;
-        loadCars(); // comment: reload with new sorting
-    };
-
+    renderCarSortingBar();
 
     try {
-        const response = await fetch("/api/admin/cars", {
-            credentials: "include"   // comment: send session cookie
-        });
-
-        if (!response.ok) {
-            console.error("Failed to load cars (status):", response.status);
-            adminContent.textContent = "Kunde inte hämta bilar.";
-            return;
-        }
-
-        const json = await response.json();
-        const cars = Array.isArray(json) ? json : json.data || [];
-
-        // -------------------------------------------------
-        // comment: IMPORTANT — Apply sorting here
-        // -------------------------------------------------
+        const cars = await fetchCars();
         sortCarsList(cars, window.currentCarSort);
-
-        console.log("CARS FROM DB:", cars);
-
-        // ----- headers -----
-        const h = document.createElement("div");
-        h.classList.add("car-titles");
-
-        ["ID", "Name", "Type", "Model", "Price", "Image", "Feature1", "Feature2", "Feature3"]
-            .forEach(t => h.appendChild(createHeader(t)));
-
-        adminContent.appendChild(h);
-
-        // ----- rows -----
-        cars.forEach(car => {
-            const r = document.createElement("div");
-            r.classList.add("car-row");
-
-            r.appendChild(createCell(car.id));
-            r.appendChild(createCell(car.name));
-            r.appendChild(createCell(car.type));
-            r.appendChild(createCell(car.model));
-            r.appendChild(createCell(car.price));
-
-            // ----- image -----
-            const imgCell = document.createElement("div");
-            const img = document.createElement("img");
-
-            if (car.image) {
-                img.src = "data:image/jpeg;base64," + car.image;
-            }
-
-            img.classList.add("car-image");
-            imgCell.appendChild(img);
-            r.appendChild(imgCell);
-
-            r.appendChild(createCell(car.feature1));
-            r.appendChild(createCell(car.feature2));
-            r.appendChild(createCell(car.feature3));
-
-            adminContent.appendChild(r);
-        });
-
-    } catch (err) {
-        console.error("Error loading cars:", err);
-        adminContent.textContent = "Fel inträffade vid hämtning av بilar.";
-    }
-
-
-    // --------- helpers ---------
-    function createHeader(text) {
-        const d = document.createElement("div");
-        d.textContent = text;
-        return d;
-    }
-
-    function createCell(value) {
-        const d = document.createElement("div");
-        d.textContent = value ?? "-";
-        return d;
+        renderCarsTable(cars);
+    } catch {
+        adminContent.textContent = "خطأ أثناء جلب السيارات";
     }
 }
+
+/* ---------- data ---------- */
+async function fetchCars() {
+    const res = await fetch("/api/admin/cars", { credentials: "include" });
+    if (!res.ok) throw new Error();
+    const json = await res.json();
+    return Array.isArray(json) ? json : json.data || [];
+}
+
+/* ---------- UI ---------- */
+function renderCarSortingBar() {
+    if (!window.currentCarSort) window.currentCarSort = "id-asc";
+
+    const bar = document.createElement("div");
+    bar.classList.add("sorting-bar");
+    bar.innerHTML = `
+        <label>Sortera:</label>
+        <select id="sortCars">
+            <option value="id-asc">ID 1–9</option>
+            <option value="id-desc">ID 9–1</option>
+            <option value="name-asc">Name A–Ö</option>
+            <option value="name-desc">Name Ö–A</option>
+            <option value="type-asc">Type A–Ö</option>
+            <option value="type-desc">Type Ö–A</option>
+            <option value="model-asc">Model A–Ö</option>
+            <option value="model-desc">Model Ö–A</option>
+            <option value="price-asc">Price Low → High</option>
+            <option value="price-desc">Price High → Low</option>
+        </select>
+    `;
+    adminContent.appendChild(bar);
+
+    const select = bar.querySelector("#sortCars");
+    select.value = window.currentCarSort;
+    select.onchange = () => {
+        window.currentCarSort = select.value;
+        loadCars();
+    };
+}
+
+function renderCarsTable(cars) {
+    renderCarHeaders();
+    cars.forEach(renderCarRow);
+}
+
+function renderCarHeaders() {
+    const row = document.createElement("div");
+    row.classList.add("car-titles");
+    ["ID","Name","Type","Model","Price","Image","Feature1","Feature2","Feature3"]
+        .forEach(t => row.appendChild(createCell(t)));
+    adminContent.appendChild(row);
+}
+
+function renderCarRow(car) {
+    const row = document.createElement("div");
+    row.classList.add("car-row");
+
+    [car.id, car.name, car.type, car.model, car.price]
+        .forEach(v => row.appendChild(createCell(v)));
+
+    const imgCell = document.createElement("div");
+    const img = document.createElement("img");
+    if (car.image) img.src = "data:image/jpeg;base64," + car.image;
+    img.classList.add("car-image");
+    imgCell.appendChild(img);
+    row.appendChild(imgCell);
+
+    [car.feature1, car.feature2, car.feature3]
+        .forEach(v => row.appendChild(createCell(v)));
+
+    adminContent.appendChild(row);
+}
+
+/* ---------- helpers ---------- */
+function createCell(value) {
+    const d = document.createElement("div");
+    d.textContent = value ?? "-";
+    return d;
+}
+
 
 
 
@@ -372,126 +314,100 @@ function sortCarsList(cars, sortKey) {
 }
 
 
-
-
 async function loadBookings() {
-
-    if (!adminContent) {
-        console.error("adminContent not found (loadBookings)");
-        return;
-    }
+    if (!adminContent) return;
 
     adminContent.innerHTML = "";
+    renderBookingSortingBar();
 
-    // ----- sorting bar -----
-    const sortingBar = document.createElement("div");
-    sortingBar.classList.add("sorting-bar");
-
-    sortingBar.innerHTML = `
-    <label>Sortera:</label>
-    <select id="sortBookings">
-        <option value="id-asc">ID 1–9</option>
-        <option value="id-desc">ID 9–1</option>
-
-        <option value="active-asc">Active Off → On</option>
-        <option value="active-desc">Active On → Off</option>
-
-        <option value="car-asc">Car A–Ö</option>
-        <option value="car-desc">Car Ö–A</option>
-
-        <option value="user-asc">User A–Ö</option>
-        <option value="user-desc">User Ö–A</option>
-
-        <option value="from-asc">From ↑</option>
-        <option value="from-desc">From ↓</option>
-
-        <option value="to-asc">To ↑</option>
-        <option value="to-desc">To ↓</option>
-
-        <option value="price-asc">Price Low → High</option>
-        <option value="price-desc">Price High → Low</option>
-    </select>
-    `;
-
-    adminContent.appendChild(sortingBar);
-
-    if (!window.currentBookingSort) {
-        window.currentBookingSort = "id-asc"; // comment: default
-    }
-
-    const sortSelect = document.getElementById("sortBookings");
-    sortSelect.value = window.currentBookingSort;
-
-    sortSelect.onchange = () => {
-        window.currentBookingSort = sortSelect.value;
-        loadBookings(); // comment: reload sorted list
-    };
-
-
-    // ----- fetch data -----
     try {
-        const response = await fetch("/api/admin/bookings", {
-            credentials: "include"
-        });
-
-        if (!response.ok) {
-            console.error("Failed to load bookings:", response.status);
-            adminContent.textContent = "Kunde inte hämta bokningar.";
-            return;
-        }
-
-        const json = await response.json();
-        const bookings = Array.isArray(json) ? json : json.data || [];
-
-        // ----- apply sorting -----
+        const bookings = await fetchBookings();
         sortBookingsList(bookings, window.currentBookingSort);
-
-        console.log("BOOKINGS FROM DB:", bookings);
-
-        // ----- headers -----
-        const h = document.createElement("div");
-        h.classList.add("booking-titles");
-
-        ["ID", "Active", "Car", "User", "From", "To", "Price"]
-            .forEach(t => h.appendChild(createHeader(t)));
-
-        adminContent.appendChild(h);
-
-        // ----- rows -----
-        bookings.forEach(b => {
-            const r = document.createElement("div");
-            r.classList.add("booking-row");
-
-            r.appendChild(createCell(b.id));
-            r.appendChild(createCell(b.active));
-            r.appendChild(createCell(b.car?.name ?? "-"));
-            r.appendChild(createCell(b.user?.username ?? "-"));
-            r.appendChild(createCell(b.fromDate ?? "-"));
-            r.appendChild(createCell(b.toDate ?? "-"));
-            r.appendChild(createCell(b.price ?? "-"));
-
-            adminContent.appendChild(r);
-        });
-
-    } catch (err) {
-        console.error("Error loading bookings:", err);
-        adminContent.textContent = "Fel inträffade vid hämtning av bokningar.";
-    }
-
-
-    // ----- helpers -----
-    function createHeader(text) {
-        const d = document.createElement("div");
-        d.textContent = text;
-        return d;
-    }
-
-    function createCell(value) {
-        const d = document.createElement("div");
-        d.textContent = value ?? "-";
-        return d;
+        renderBookingsTable(bookings);
+    } catch {
+        adminContent.textContent = "خطأ أثناء جلب الحجوزات";
     }
 }
+
+/* ---------- data ---------- */
+async function fetchBookings() {
+    const res = await fetch("/api/admin/bookings", { credentials: "include" });
+    if (!res.ok) throw new Error();
+    const json = await res.json();
+    return Array.isArray(json) ? json : json.data || [];
+}
+
+/* ---------- UI ---------- */
+function renderBookingSortingBar() {
+    if (!window.currentBookingSort) window.currentBookingSort = "id-asc";
+
+    const bar = document.createElement("div");
+    bar.classList.add("sorting-bar");
+    bar.innerHTML = `
+        <label>Sortera:</label>
+        <select id="sortBookings">
+            <option value="id-asc">ID 1–9</option>
+            <option value="id-desc">ID 9–1</option>
+            <option value="active-asc">Active Off → On</option>
+            <option value="active-desc">Active On → Off</option>
+            <option value="car-asc">Car A–Ö</option>
+            <option value="car-desc">Car Ö–A</option>
+            <option value="user-asc">User A–Ö</option>
+            <option value="user-desc">User Ö–A</option>
+            <option value="from-asc">From ↑</option>
+            <option value="from-desc">From ↓</option>
+            <option value="to-asc">To ↑</option>
+            <option value="to-desc">To ↓</option>
+            <option value="price-asc">Price Low → High</option>
+            <option value="price-desc">Price High → Low</option>
+        </select>
+    `;
+    adminContent.appendChild(bar);
+
+    const select = bar.querySelector("#sortBookings");
+    select.value = window.currentBookingSort;
+    select.onchange = () => {
+        window.currentBookingSort = select.value;
+        loadBookings();
+    };
+}
+
+function renderBookingsTable(bookings) {
+    renderBookingHeaders();
+    bookings.forEach(renderBookingRow);
+}
+
+function renderBookingHeaders() {
+    const row = document.createElement("div");
+    row.classList.add("booking-titles");
+    ["ID","Active","Car","User","From","To","Price"]
+        .forEach(t => row.appendChild(createCell(t)));
+    adminContent.appendChild(row);
+}
+
+function renderBookingRow(b) {
+    const row = document.createElement("div");
+    row.classList.add("booking-row");
+
+    [
+        b.id,
+        b.active,
+        b.car?.name,
+        b.user?.username,
+        b.fromDate,
+        b.toDate,
+        b.price
+    ].forEach(v => row.appendChild(createCell(v)));
+
+    adminContent.appendChild(row);
+}
+
+function createCell(value) {
+    const d = document.createElement("div");
+    d.textContent = value ?? "-";
+    return d;
+}
+
 
 
 function sortBookingsList(bookings, sortKey) {

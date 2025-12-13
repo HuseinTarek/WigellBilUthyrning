@@ -39,22 +39,27 @@ public class LoginController {
 
     private void authenticateUser(User user, HttpServletRequest request) {
 
-        List<SimpleGrantedAuthority> authorities =
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        // Create role
+        SimpleGrantedAuthority role =
+                new SimpleGrantedAuthority("ROLE_" + user.getRole());
 
+        // Create authentication object
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(
                         user.getUsername(),
                         null,
-                        authorities
+                        List.of(role)
                 );
 
+        // Set authentication in security context
         SecurityContextHolder.getContext().setAuthentication(auth);
 
+        // Store security context in session
         request.getSession(true)
                 .setAttribute("SPRING_SECURITY_CONTEXT",
                         SecurityContextHolder.getContext());
     }
+
 
 
 }

@@ -14,32 +14,30 @@ public class UserConfig {
         return args -> {
 
             // create helper method
-            createIfMissing(userRepository, 1, "user1");
-            createIfMissing(userRepository, 2, "user2");
-            createIfMissing(userRepository, 3, "user3");
-            createIfMissing(userRepository, 4, "user4");
-            createIfMissing(userRepository, 6, "user6");
+            createIfMissing(userRepository,  "user1");
+            createIfMissing(userRepository, "user2");
+            createIfMissing(userRepository,  "user3");
+            createIfMissing(userRepository,  "user4");
+            createIfMissing(userRepository, "user6");
 
             System.out.println("Users loaded.");
         };
     }
 
-    private void createIfMissing(UserRepository repo, int id, String username) {
+    private void createIfMissing(UserRepository repo, String username) {
 
         String email = username + "@mail.com";
 
-        if (repo.existsById(id)) return;
         if (repo.findByEmail(email).isPresent()) return;
         if (repo.findByUsername(username) != null) return;
 
         User u = new User();
-        u.setId(id);
         u.setUsername(username);
         u.setEmail(email);
         u.setFirstName(username);
         u.setLastName("Test");
         u.setNoOfOrders(0);
-        u.setPassword("pass123");
+        u.setPassword("pass123"); // plain for demo only
         u.setPhone("0700000000");
         u.setRole("USER");
 

@@ -31,24 +31,29 @@ public class UserController {
         this.carService = carService;
     }
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            String username = loginRequest != null ? loginRequest.getUsername() : null;
-            log.info("Login attempt for username='{}'", username);
-            User user = userService.validateLogin(username, loginRequest != null ? loginRequest.getPassword() : null);
-            if (user != null) {
-                log.info("Login successful for username='{}'", username);
-                return ResponseEntity.ok(user);
-            } else {
-                log.warn("Login failed for username='{}'", username);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-        } catch (Exception ex) {
-            log.error("Unexpected error during login", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @PostMapping(
+            value = "/login",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+
+        if (request == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        User user = userService.validateLogin(
+                request.getUsername(),
+                request.getPassword()
+        );
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(user);
     }
+
 
     @GetMapping("/me")
     public User getMyProfile(Authentication auth) {

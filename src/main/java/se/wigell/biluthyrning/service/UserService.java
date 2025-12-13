@@ -29,31 +29,27 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
+
         User user = userRepository.findByUsername(username);
+
         if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UsernameNotFoundException("User not found");
         }
 
-        String raw = user.getRole() == null ? "USER" : user.getRole().trim();
+        String role = user.getRole() != null ? user.getRole() : "ROLE_USER";
 
-        java.util.List<SimpleGrantedAuthority> authorities = java.util.Arrays.stream(raw.split("[,;\\s]+"))
-                .map(r -> r.trim().toUpperCase())
-                .filter(r -> !r.isEmpty())
-                .map(r -> r.startsWith("ROLE_") ? r.substring(5) : r) // remove any existing prefix
-                .map(r -> "ROLE_" + r) // ensure single prefix
-                .map(SimpleGrantedAuthority::new)
-                .collect(java.util.stream.Collectors.toList());
+        List<SimpleGrantedAuthority> authorities =
+                List.of(new SimpleGrantedAuthority(role));
 
-        if (authorities.isEmpty()) {
-            authorities = java.util.Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-        }
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
                 authorities
         );
     }
+
+
 
 
     public List<User> getAllUsers(){
@@ -64,44 +60,37 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public User saveUser(User user){
-        if (user.getPassword() != null) {
-            String pw = user.getPassword();
-            if (!pw.startsWith("$2a$") && !pw.startsWith("$2b$") && !pw.startsWith("$2y$")) {
-                user.setPassword(passwordEncoder.encode(pw));
-            }
+    public User saveUser(User user) {
+
+        String password = user.getPassword();
+
+        if (password != null && !password.startsWith("$2")) {
+            user.setPassword(passwordEncoder.encode(password));
         }
+
         return userRepository.save(user);
     }
 
-    public User validateLogin(String username, String rawPassword) {
-        if (username == null || rawPassword == null) return null;
+
+
+    public User validateLogin(String username, String password) {
+
+        if (username == null || password == null) return null;
 
         User user = userRepository.findByUsername(username);
-        if (user == null) {
-            return null;
-        }
+        if (user == null || user.getPassword() == null) return null;
 
-        String stored = user.getPassword();
-        if (stored == null) {
-            return null;
-        }
+        boolean ok;
 
-        // if stored looks like bcrypt hash, use PasswordEncoder.matches
-        if (stored.startsWith("$2a$") || stored.startsWith("$2b$") || stored.startsWith("$2y$")) {
-            if (!passwordEncoder.matches(rawPassword, stored)) {
-                return null;
-            }
+        if (user.getPassword().startsWith("$2")) {
+            ok = passwordEncoder.matches(password, user.getPassword());
         } else {
-            // legacy/plaintext support: compare directly (log a warning)
-            log.warn("User '{}' has a non-hashed password in DB. Migrate to bcrypt.", username);
-            if (!rawPassword.equals(stored)) {
-                return null;
-            }
+            ok = password.equals(user.getPassword());
         }
 
-        return user;
+        return ok ? user : null;
     }
+
 
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);

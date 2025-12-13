@@ -43,15 +43,15 @@
 .car-row {
     display: grid;
     grid-template-columns:
-        40px      /* id */
+        40px        /* id */
         100px       /* type */
-        100px     /* model */
-        80px     /* price */
-        60px     /* image */
-        1.2fr      /* feature1 */
-        2fr      /* feature2 */
-        2fr/* feature3 */
-    1fr;
+        100px       /* model */
+        80px        /* price */
+        60px        /* image */
+        1.2fr       /* feature1 */
+        2fr         /* feature2 */
+        2fr         /* feature3 */
+        1fr;
 
     padding: 10px 0;
     border-bottom: 1px solid #334155;
@@ -91,8 +91,6 @@
     padding: 10px 0;
     border-bottom: 1px solid #334155;
 }
-
-
 
 .title {
     font-size: 28px;

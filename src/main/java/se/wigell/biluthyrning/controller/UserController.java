@@ -22,7 +22,6 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final BookingService bookingService;
     private final CarService carService;

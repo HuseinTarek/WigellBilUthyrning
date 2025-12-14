@@ -34,8 +34,6 @@ public class LoginController {
         return user;
     }
 
-
-
     private void authenticateUser(User user, HttpServletRequest request) {
 
         // Create role

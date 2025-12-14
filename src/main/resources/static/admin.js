@@ -317,7 +317,7 @@ async function loadBookings() {
         sortBookingsList(bookings, window.currentBookingSort);
         renderBookingsTable(bookings);
     } catch {
-        adminContent.textContent = "خطأ أثناء جلب الحجوزات";
+        adminContent.textContent = "Error while fetching bookings";
     }
 }
 
@@ -397,8 +397,6 @@ function createCell(value) {
     d.textContent = value ?? "-";
     return d;
 }
-
-
 
 function sortBookingsList(bookings, sortKey) {
 

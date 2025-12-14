@@ -123,17 +123,19 @@ function loadCart() {
     }
 
     const car = JSON.parse(stored);
+
     const box = document.createElement("div");
-    box.classList.add("cart-box");
-    box.innerHTML = `
-        <h2>Din beställning</h2>
-        <p><strong>Bil:</strong> ${car.name}</p>
-        <p><strong>Typ:</strong> ${car.type}</p>
-        <p><strong>Model:</strong> ${car.model}</p>
-        <p><strong>Pris:</strong> ${car.price} kr / dag</p>
-        <button id="confirmBtn">Bekräfta bokning</button>
-        <button id="clearBtn">Ta bort från korg</button>
-    `;
+    box.className = "cart-box";
+
+    box.innerHTML =
+        "<h2>Din beställning</h2>" +
+        "<p>Bil: " + car.name + "</p>" +
+        "<p>Typ: " + car.type + "</p>" +
+        "<p>Model: " + car.model + "</p>" +
+        "<p>Pris: " + car.price + " kr / dag</p>" +
+        "<button id='confirmBtn'>Bekräfta bokning</button>" +
+        "<button id='clearBtn'>Ta bort från korg</button>";
+
     userContent.appendChild(box);
 
     document.getElementById("clearBtn").onclick = () => {

@@ -40,7 +40,6 @@ function normalizeArray(obj) {
 }
 
 
-
 async function loadCars() {
     clearUserContent();
     renderSortingBar();
@@ -50,13 +49,11 @@ async function loadCars() {
     renderCars(sortedCars);
 }
 
-/* ---------- data ---------- */
 async function fetchCars() {
     const res = await fetch("/api/user/cars", { credentials: "include" });
     return await res.json();
 }
 
-/* ---------- sorting ---------- */
 function renderSortingBar() {
     const bar = document.createElement("div");
     bar.classList.add("sorting-bar");
@@ -79,7 +76,6 @@ function renderSortingBar() {
     };
 }
 
-/* ---------- render ---------- */
 function renderCarsHeader() {
     const header = document.createElement("div");
     header.classList.add("car-titles");
@@ -114,7 +110,6 @@ function renderCarRow(car) {
     userContent.appendChild(row);
 }
 
-/* ---------- cart ---------- */
 function addToCart(car) {
     localStorage.setItem("selectedCar", JSON.stringify(car));
 }
@@ -147,7 +142,6 @@ function loadCart() {
     };
 }
 
-/* ---------- helpers ---------- */
 function clearUserContent() {
     userContent.innerHTML = "";
 }
@@ -220,7 +214,6 @@ async function loadBookings() {
     }
 }
 
-/* ---------- data ---------- */
 async function fetchMyBookings() {
     const res = await fetch("/api/user/my-bookings", { credentials: "include" });
 
@@ -234,7 +227,6 @@ async function fetchMyBookings() {
     return normalizeArray(json);
 }
 
-/* ---------- render ---------- */
 function renderBookingHeader() {
     const h = document.createElement("div");
     h.classList.add("booking-titles");
@@ -270,7 +262,6 @@ function renderBookingRow(b) {
     userContent.appendChild(r);
 }
 
-/* ---------- helpers ---------- */
 function clearUserContent() {
     userContent.innerHTML = "";
 }

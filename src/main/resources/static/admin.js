@@ -114,7 +114,6 @@ function renderUserRow(u) {
     adminContent.appendChild(row);
 }
 
-/* ---------- helpers ---------- */
 function createCell(value) {
     const d = document.createElement("div");
     d.textContent = value ?? "-";
@@ -192,7 +191,6 @@ async function loadCars() {
     }
 }
 
-/* ---------- data ---------- */
 async function fetchCars() {
     const res = await fetch("/api/admin/cars", { credentials: "include" });
     if (!res.ok) throw new Error();
@@ -200,7 +198,6 @@ async function fetchCars() {
     return Array.isArray(json) ? json : json.data || [];
 }
 
-/* ---------- UI ---------- */
 function renderCarSortingBar() {
     if (!window.currentCarSort) window.currentCarSort = "id-asc";
 
@@ -264,16 +261,11 @@ function renderCarRow(car) {
     adminContent.appendChild(row);
 }
 
-/* ---------- helpers ---------- */
 function createCell(value) {
     const d = document.createElement("div");
     d.textContent = value ?? "-";
     return d;
 }
-
-
-
-
 
 function sortCarsList(cars, sortKey) {
     // comment: handle all sorting cases
@@ -329,7 +321,6 @@ async function loadBookings() {
     }
 }
 
-/* ---------- data ---------- */
 async function fetchBookings() {
     const res = await fetch("/api/admin/bookings", { credentials: "include" });
     if (!res.ok) throw new Error();
@@ -337,7 +328,6 @@ async function fetchBookings() {
     return Array.isArray(json) ? json : json.data || [];
 }
 
-/* ---------- UI ---------- */
 function renderBookingSortingBar() {
     if (!window.currentBookingSort) window.currentBookingSort = "id-asc";
 

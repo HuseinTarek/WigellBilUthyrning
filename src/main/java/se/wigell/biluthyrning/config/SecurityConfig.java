@@ -13,7 +13,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import se.wigell.biluthyrning.service.UserService;
-import se.wigell.biluthyrning.model.User;
 
 
 @Configuration
@@ -33,7 +32,6 @@ public class SecurityConfig {
     }
 
 
-    // java
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -48,23 +46,18 @@ public class SecurityConfig {
                                 "/",
                                 "/login.html",
                                 "/user.html",
-                          //      "/admin.html",
                                 "/login.js",
                                 "/user.js",
-                           //     "/admin.js",
                                 "/global.css",
                                 "/login.css",
                                 "/user.css",
-                            //    "/admin.css",
                                 "/KoncernensLogga.png"
                         ).permitAll()
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        // admin endpoints require ADMIN
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // allow both USER and ADMIN to call user APIs (avoid 403 when admin should access these)
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
 
                         .anyRequest().authenticated()
@@ -72,7 +65,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login.html")
                         .loginProcessingUrl("/login")
-                        .usernameParameter("username")   // make sure these match your login form inputs
+                        .usernameParameter("username")
                         .passwordParameter("password")
                         .successHandler((req, res, auth) -> {
                             System.out.println("LOGIN AUTHORITIES -> " + auth.getAuthorities());
@@ -105,16 +98,14 @@ public class SecurityConfig {
 
 
 
-    // CORS CONFIGURATION
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // COMMENT: Allow frontend to call backend during development
-        config.addAllowedOriginPattern("*");     // allow all origins
-        config.addAllowedMethod("*");            // allow GET, POST, PUT, DELETE
-        config.addAllowedHeader("*");            // allow all headers
-        config.setAllowCredentials(true);        // allow credentials if needed
+        config.addAllowedOriginPattern("*");
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

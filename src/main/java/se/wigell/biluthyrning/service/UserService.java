@@ -50,8 +50,6 @@ public class UserService implements UserDetailsService {
     }
 
 
-
-
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
@@ -72,7 +70,6 @@ public class UserService implements UserDetailsService {
     }
 
 
-
     public User validateLogin(String username, String password) {
 
         if (username == null || password == null) return null;
@@ -88,7 +85,10 @@ public class UserService implements UserDetailsService {
             ok = password.equals(user.getPassword());
         }
 
-        return ok ? user : null;
+        if (ok) {
+            return user;
+        }
+        return null;
     }
 
 

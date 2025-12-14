@@ -13,7 +13,6 @@ public class UserConfig {
     CommandLineRunner loadUsers(UserRepository userRepository) {
         return args -> {
 
-            // create helper method
             createIfMissing(userRepository,  "user1");
             createIfMissing(userRepository, "user2");
             createIfMissing(userRepository,  "user3");
@@ -37,7 +36,7 @@ public class UserConfig {
         u.setFirstName(username);
         u.setLastName("Test");
         u.setNoOfOrders(0);
-        u.setPassword("pass123"); // plain for demo only
+        u.setPassword("pass123");
         u.setPhone("0700000000");
         u.setRole("USER");
 

@@ -5,17 +5,17 @@
     font-family: 'Inter', sans-serif;
 
     display: flex;
-    flex-direction: column;     /* fix */
-    justify-content: flex-start;/* fix */
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
 
-    min-height: 100vh;          /* fix */
+    min-height: 100vh;
     margin: 0;
-    padding: 20px 0;            /* slight padding so content doesn't touch the top */
+    padding: 20px 0;
 }
 
 .login-panel {
-    margin-top: 40px;  /* fix */
+    margin-top: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;

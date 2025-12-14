@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import se.wigell.biluthyrning.model.Booking;
 import se.wigell.biluthyrning.model.Car;
+import se.wigell.biluthyrning.model.LoginRequest;
 import se.wigell.biluthyrning.service.BookingService;
 import se.wigell.biluthyrning.service.CarService;
 import se.wigell.biluthyrning.service.UserService;

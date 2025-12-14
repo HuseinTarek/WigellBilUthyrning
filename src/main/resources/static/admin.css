@@ -32,8 +32,6 @@
     border-bottom: 1px solid #334155;
 }
 
-
-
 .user-titles {
     font-weight: bold;
     color: #3b82f6;
@@ -43,14 +41,14 @@
 .car-row {
     display: grid;
     grid-template-columns:
-        40px        /* id */
-        100px       /* type */
-        100px       /* model */
-        80px        /* price */
-        60px        /* image */
-        1.2fr       /* feature1 */
-        2fr         /* feature2 */
-        2fr         /* feature3 */
+        40px
+        100px
+        100px
+        80px
+        60px
+        1.2fr
+        2fr
+        2fr
         1fr;
 
     padding: 10px 0;
@@ -161,6 +159,14 @@
     align-items:center;
 }
 
+.styleguide-link {
+    margin-right: auto;
+    padding: 8px 14px;
+    border-radius: 6px;
+    background-color: white;
+    text-decoration: none;
+    color: black;
+}
 
 .ad-space img {
     height: 60px;

@@ -1,15 +1,14 @@
 package se.wigell.biluthyrning.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import se.wigell.biluthyrning.model.LoginRequest;
 import se.wigell.biluthyrning.service.UserService;
 import se.wigell.biluthyrning.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

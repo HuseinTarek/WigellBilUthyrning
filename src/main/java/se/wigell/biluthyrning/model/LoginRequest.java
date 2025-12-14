@@ -1,4 +1,4 @@
-package se.wigell.biluthyrning.controller;
+package se.wigell.biluthyrning.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

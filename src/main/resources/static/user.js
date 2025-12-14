@@ -229,6 +229,7 @@ async function fetchMyBookings() {
     return normalizeArray(json);
 }
 
+
 function renderBookingHeader() {
     const h = document.createElement("div");
     h.classList.add("booking-titles");
@@ -247,6 +248,7 @@ function renderBookings(bookings) {
     bookings.forEach(renderBookingRow);
 }
 
+
 function renderBookingRow(b) {
     const r = document.createElement("div");
     r.classList.add("booking-row");
@@ -264,9 +266,11 @@ function renderBookingRow(b) {
     userContent.appendChild(r);
 }
 
+
 function clearUserContent() {
     userContent.innerHTML = "";
 }
+
 
 function renderEmpty(text) {
     const d = document.createElement("div");
@@ -274,6 +278,7 @@ function renderEmpty(text) {
     d.textContent = text;
     userContent.appendChild(d);
 }
+
 
 function createCell(value) {
     const d = document.createElement("div");

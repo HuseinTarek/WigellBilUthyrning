@@ -3,82 +3,172 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wigellkoncernen Styleguide</title>
-
-  <!-- Link to external CSS file -->
+  <title>Wigellkoncernens Styleguide</title>
   <link rel="stylesheet" href="styleguide.css">
 </head>
 
 <body>
 <div class="container">
 
-  <h1>Wigellkoncernen – Styleguide</h1>
+  <header>
+    <h1>Wigellkoncernen – Styleguide</h1>
+    <p class="lead">
+      Denna sida visar hur UI-komponenter ska se ut och användas i bokningssystemet.
+    </p>
+  </header>
 
   <nav class="nav">
-    <a href="#text">Typography</a>
-    <a href="#buttons">Buttons</a>
-    <a href="#tables">Tables</a>
-    <a href="#alerts">Messages</a>
-    <a href="#forms">Forms</a>
+    <div class="nav-title">Komponenter</div>
+    <div class="nav-links">
+      <a href="#typografi">Typografi</a>
+      <a href="#farger">Färgschema</a>
+      <a href="#knappar">Knappar</a>
+      <a href="#tabeller">Tabeller</a>
+      <a href="#navigation">Navigation</a>
+      <a href="#meddelanden">Meddelanden</a>
+      <a href="#laddning">Laddning</a>
+      <a href="#paneler">Paneler</a>
+      <a href="#formular">Formulär</a>
+    </div>
   </nav>
 
-  <section id="text">
-    <h2>Typography</h2>
-    <p>Detta är exempel på vanlig text. Enkel och lätt att läsa.</p>
-  </section>
+  <main>
 
-  <section id="buttons">
-    <h2>Buttons</h2>
-    <button class="btn">Standard</button>
-    <button class="btn blue">Action</button>
-    <button class="btn green">Save</button>
-    <button class="btn red">Delete</button>
-  </section>
+    <section id="typografi">
+      <h2>Typografi</h2>
+      <h1>h1 Rubrik</h1>
+      <h2>h2 Rubrik</h2>
+      <h3>h3 Rubrik</h3>
+      <h4>h4 Rubrik</h4>
+      <p>Detta är vanlig brödtext.</p>
+    </section>
 
-  <section id="tables">
-    <h2>Tables</h2>
-    <table>
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Type</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>1</td>
-        <td>Volvo XC90</td>
-        <td>SUV</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>Saab 9-3</td>
-        <td>Sedan</td>
-      </tr>
-      </tbody>
-    </table>
-  </section>
+    <section id="farger">
+      <h2 class="sg-title">Färgschema</h2>
 
-  <section id="alerts">
-    <h2>Messages</h2>
-    <div class="alert info">Info message</div>
-    <div class="alert success">Saved successfully</div>
-    <div class="alert error">Something went wrong</div>
-  </section>
+      <div class="color-grid">
+        <div class="color-box bg">
+          <span>Bakgrund</span>
+          <code>#020617</code>
+        </div>
 
-  <section id="forms">
-    <h2>Forms</h2>
-    <form>
-      <label>Name</label>
+        <div class="color-box surface">
+          <span>Yta / Panel</span>
+          <code>#1e293b</code>
+        </div>
+
+        <div class="color-box primary">
+          <span>Primär</span>
+          <code>#3b82f6</code>
+        </div>
+
+        <div class="color-box positive">
+          <span>Positiv</span>
+          <code>#16a34a</code>
+        </div>
+
+        <div class="color-box negative">
+          <span>Negativ</span>
+          <code>#ef4444</code>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="knappar">
+      <h2>Knappar</h2>
+      <button class="btn">Standard</button>
+      <button class="btn positive">Spara</button>
+      <button class="btn negative">Ta bort</button>
+    </section>
+
+    <section id="tabeller">
+      <h2>Tabeller – Lång lista</h2>
+
+      <table class="table list">
+        <tr>
+          <th>ID</th>
+          <th>Namn</th>
+          <th>Typ</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Volvo XC90</td>
+          <td>SUV</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Saab 9-3</td>
+          <td>Sedan</td>
+        </tr>
+      </table>
+    </section>
+    <section>
+      <h2>Tabeller – Många kolumner</h2>
+
+      <div class="table-wrap">
+        <table class="table wide">
+          <tr>
+            <th>ID</th>
+            <th>Namn</th>
+            <th>Typ</th>
+            <th>Modell</th>
+            <th>Pris</th>
+            <th>Feature 1</th>
+            <th>Feature 2</th>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Tesla</td>
+            <td>El</td>
+            <td>Model 3</td>
+            <td>1299</td>
+            <td>Autopilot</td>
+            <td>GPS</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+
+    <section id="meddelanden">
+      <h2>Meddelanden</h2>
+      <div class="alert info">Info</div>
+      <div class="alert success">Sparat</div>
+      <div class="alert error">Fel</div>
+    </section>
+
+    <section id="formular">
+      <h2>Formulär</h2>
+      <label>Namn</label>
       <input type="text">
+      <button class="btn positive">Skicka</button>
+    </section>
 
-      <label>Email</label>
-      <input type="email">
+    <section id="laddning">
+      <h2>Laddning</h2>
+      <div class="spinner"></div>
+      <p>Laddar...</p>
+    </section>
 
-      <button class="btn green">Submit</button>
-    </form>
-  </section>
+    <section id="paneler">
+      <h2>Paneler</h2>
+
+      <div class="panel neutral">Neutral panel</div>
+      <div class="panel positive">Positiv panel</div>
+      <div class="panel negative">Negativ panel</div>
+    </section>
+
+
+  </main>
+
+  <footer class="style-footer">
+    <footer class="sg-footer">
+      <div class="ad-space">
+        <img src="/KoncernensLogga.png" alt="Koncernens logotyp">
+      </div>
+    </footer>
+  </footer>
 
 </div>
 </body>

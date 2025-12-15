@@ -11,7 +11,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding: 20px 40px;
+    padding: 20px 40px 0 40px;
 }
 
 .top-bar {
@@ -71,10 +71,11 @@ body {
 }
 
 .user-content {
+    flex: 1;
     overflow-x: auto;
     overflow-y: auto;
-    max-height: calc(100vh - 240px);
-    padding-bottom: 120px;
+    padding-bottom: 0;
+    max-height: none;
 }
 
 .section-title {
@@ -147,17 +148,33 @@ body {
     color: #3b82f6;
 }
 
-.user-footer {
-    margin-top: auto;
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 20px;
+}
+
+.logo {
+    height: 50px;
+}
+
+.footer {
     display:flex;
     justify-content:center;
     align-items:center;
+    margin-top: auto;
+    margin: 10px;
+    padding: 0;
 }
 
 .ad-space img {
-    height: 60px;
-    border-radius: 8px;
+    display: block;
+    width: 600px;
+    height: 170px;
+    border-radius: 0;
 }
 
-
+.dateInput {
+    width: 200px;
+}

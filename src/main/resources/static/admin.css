@@ -6,7 +6,22 @@
     gap: 20px;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
 
+.logo {
+    height: 50px;
+}
+
+.admin-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 .styleguide-link {
     color: #a78bfa; /* soft purple */
     text-decoration: none;
@@ -151,13 +166,7 @@
     color: #f8fafc;
 }
 
-.admin-footer {
-    margin-top: auto;
-    margin-bottom: 20px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
+
 
 .styleguide-link {
     margin-right: auto;
@@ -168,9 +177,26 @@
     color: black;
 }
 
+.footer {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    padding: 10px;
+}
+
+.footer img {
+    justify-self: center; /* center banner */
+}
+
+.footer a {
+    justify-self: start; /* left */
+}
+
 .ad-space img {
-    height: 60px;
-    border-radius: 8px;
+    display: block;
+    width: 600px;
+    height: 170px;
+    border-radius: 0;
 }
 
 .car-image {

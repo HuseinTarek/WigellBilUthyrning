@@ -49,10 +49,12 @@ async function loadCars() {
     renderCars(sortedCars);
 }
 
+
 async function fetchCars() {
     const res = await fetch("/api/user/cars", { credentials: "include" });
     return await res.json();
 }
+
 
 function renderSortingBar() {
     const bar = document.createElement("div");
@@ -85,6 +87,7 @@ function renderCarsHeader() {
 
     userContent.appendChild(header);
 }
+
 
 function renderCars(cars) {
     if (!cars || cars.length === 0) {
@@ -127,14 +130,27 @@ function loadCart() {
     const box = document.createElement("div");
     box.className = "cart-box";
 
-    box.innerHTML =
-        "<h2>Din beställning</h2>" +
-        "<p>Bil: " + car.name + "</p>" +
-        "<p>Typ: " + car.type + "</p>" +
-        "<p>Model: " + car.model + "</p>" +
-        "<p>Pris: " + car.price + " kr / dag</p>" +
-        "<button id='confirmBtn'>Bekräfta bokning</button>" +
-        "<button id='clearBtn'>Ta bort från korg</button>";
+    box.innerHTML = `
+    <h2>Din beställning</h2>
+
+    <p>Bil: ${car.name}</p>
+    <p>Typ: ${car.type}</p>
+    <p>Model: ${car.model}</p>
+    <p>Pris: ${car.price} kr / dag</p>
+
+    <hr>
+
+    <label>Från datum</label><br>
+    <input type="date" id="fromDate" class="dateInput"><br><br>
+
+    <label>Till datum</label><br>
+    <input type="date" id="toDate" class="dateInput">
+
+    <hr>
+
+    <button id="confirmBtn">Bekräfta</button>
+    <button id="clearBtn">Ta bort</button>
+`;
 
     userContent.appendChild(box);
 
@@ -142,7 +158,51 @@ function loadCart() {
         localStorage.removeItem("selectedCar");
         loadCart();
     };
+
+    document.getElementById("confirmBtn").onclick = () => {
+        confirmBooking(car);
+    };
 }
+
+async function confirmBooking(car) {
+    const fromDate = document.getElementById("fromDate").value;
+    const toDate = document.getElementById("toDate").value;
+
+    if (!fromDate || !toDate) {
+        alert("Vänligen välj start- och slutdatum.");
+        return;
+    }
+
+    const bookingDetails = {
+        carId: car.id,
+        fromDate: fromDate,
+        toDate: toDate
+    };
+
+    try {
+        const res = await fetch("/api/user/book-car", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(bookingDetails)
+        });
+
+        if (res.ok) {
+            alert("Bokning bekräftad!");
+            localStorage.removeItem("selectedCar");
+            loadBookings();
+        } else {
+            const errorText = await res.text();
+            alert("Bokningen misslyckades: " + errorText);
+        }
+    } catch (error) {
+        console.error("Error during booking:", error);
+        alert("Ett nätverksfel inträffade. Försök igen.");
+    }
+}
+
 
 function clearUserContent() {
     userContent.innerHTML = "";
